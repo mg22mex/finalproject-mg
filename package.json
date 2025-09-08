@@ -1,0 +1,70 @@
+{
+  "name": "autosell-mx",
+  "version": "1.0.0",
+  "description": "Autosell.mx - Complete Vehicle Management & Automation System",
+  "main": "index.js",
+  "scripts": {
+    "dev:all": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\" \"npm run dev:n8n\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:n8n": "docker-compose up n8n",
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && npm run build",
+    "test": "npm run test:frontend && npm run test:backend",
+    "test:frontend": "cd frontend && npm run test",
+    "test:backend": "cd backend && npm run test",
+    "test:coverage": "npm run test:coverage:frontend && npm run test:coverage:backend",
+    "test:coverage:frontend": "cd frontend && npm run test:coverage",
+    "test:coverage:backend": "cd backend && npm run test:coverage",
+    "test:e2e": "cd frontend && npm run test:e2e",
+    "lint": "npm run lint:frontend && npm run lint:backend",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint:backend": "cd backend && npm run lint",
+    "format": "npm run format:frontend && npm run format:backend",
+    "format:frontend": "cd frontend && npm run format",
+    "format:backend": "cd backend && npm run format",
+    "db:setup": "docker-compose up -d postgres",
+    "db:migrate": "cd backend && npm run db:migrate",
+    "db:seed": "cd backend && npm run db:seed",
+    "db:reset": "docker-compose down && docker volume rm final_postgres_data && npm run db:setup",
+    "start": "docker-compose up -d",
+    "stop": "docker-compose down",
+    "logs": "docker-compose logs -f",
+    "clean": "docker-compose down -v --remove-orphans",
+    "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install",
+    "setup": "npm run install:all && npm run db:setup && npm run db:migrate && npm run db:seed"
+  },
+  "keywords": [
+    "vehicle-management",
+    "car-dealership",
+    "automation",
+    "social-media",
+    "facebook-marketplace",
+    "google-sheets",
+    "google-drive"
+  ],
+  "author": "Autosell.mx Development Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2"
+  },
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/autosell-mx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/autosell-mx/issues"
+  },
+  "homepage": "https://github.com/yourusername/autosell-mx#readme"
+}

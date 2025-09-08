@@ -1,0 +1,207 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: autosell_postgres
+    environment:
+      POSTGRES_DB: autosell_mx
+      POSTGRES_USER: autosell_user
+      POSTGRES_PASSWORD: autosell_password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - autosell_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U autosell_user -d autosell_mx"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis for Caching
+  redis:
+    image: redis:7-alpine
+    container_name: autosell_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - autosell_network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # n8n Workflow Automation
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: autosell_n8n
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=autosell123
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - N8N_USER_MANAGEMENT_DISABLED=false
+      - N8N_EMAIL_MODE=smtp
+      - WEBHOOK_URL=http://localhost:5678/
+      - GENERIC_TIMEZONE=America/Mexico_City
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=autosell_mx
+      - DB_POSTGRESDB_USER=autosell_user
+      - DB_POSTGRESDB_PASSWORD=autosell_password
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./workflows:/home/node/.n8n/workflows
+      - ./workflows/templates:/home/node/.n8n/workflows/templates
+    networks:
+      - autosell_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5678/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Backend API (Python FastAPI)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: autosell_backend
+    environment:
+      - DATABASE_URL=postgresql://autosell_user:autosell_password@postgres:5432/autosell_mx
+      - REDIS_URL=redis://redis:6379
+      - N8N_WEBHOOK_URL=http://n8n:5678/webhook/
+      - GOOGLE_CREDENTIALS_FILE=/app/credentials/google-credentials.json
+      - GOOGLE_SHEET_ID=${GOOGLE_SHEET_ID}
+      - GOOGLE_DRIVE_FOLDER_ID=${GOOGLE_DRIVE_FOLDER_ID}
+      - FACEBOOK_ACCESS_TOKEN=${FACEBOOK_ACCESS_TOKEN}
+      - FACEBOOK_PAGE_ID=${FACEBOOK_PAGE_ID}
+      - INSTAGRAM_ACCESS_TOKEN=${INSTAGRAM_ACCESS_TOKEN}
+      - TWITTER_API_KEY=${TWITTER_API_KEY}
+      - TWITTER_API_SECRET=${TWITTER_API_SECRET}
+      - TWITTER_ACCESS_TOKEN=${TWITTER_ACCESS_TOKEN}
+      - TWITTER_ACCESS_TOKEN_SECRET=${TWITTER_ACCESS_TOKEN_SECRET}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./credentials:/app/credentials
+      - ./uploads:/app/uploads
+    networks:
+      - autosell_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend (React)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: autosell_frontend
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+      - REACT_APP_N8N_URL=http://localhost:5678
+      - REACT_APP_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - autosell_network
+    depends_on:
+      - backend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Monitoring Stack (Optional)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: autosell_prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - autosell_network
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: autosell_grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_USERS_ALLOW_SIGN_UP=false
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    networks:
+      - autosell_network
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  n8n_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  autosell_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
