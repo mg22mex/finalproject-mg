@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Facebook, RefreshCw, Play, Settings, AlertCircle, Clock, Calendar, BarChart3, Zap, StopCircle, CheckCircle, XCircle } from 'lucide-react'
+import { Facebook, RefreshCw, Play, Settings, AlertCircle, Calendar, BarChart3, Zap, StopCircle, CheckCircle } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
 interface RepostingStatus {
@@ -142,7 +142,7 @@ const FacebookReposting: React.FC = () => {
       })
       
       if (response.ok) {
-        const result = await response.json()
+        await response.json()
         toast.success('Post de prueba creado exitosamente')
         setTestMessage("")
         await fetchStatus()
