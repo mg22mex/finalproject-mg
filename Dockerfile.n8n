@@ -15,5 +15,5 @@ ENV N8N_BASIC_AUTH_PASSWORD=password
 # Expose the port n8n runs on
 EXPOSE 5678
 
-# Start n8n
-CMD ["n8n", "start"]
+# Use the default entrypoint from the base image
+# The n8nio/n8n image already has the correct entrypoint configured
