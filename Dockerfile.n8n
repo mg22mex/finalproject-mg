@@ -9,7 +9,8 @@ ENV N8N_PATH=/
 ENV N8N_EDITOR_BASE_URL=http://localhost:5678/
 ENV N8N_BASIC_AUTH_ACTIVE=true
 ENV N8N_BASIC_AUTH_USER=admin
-ENV N8N_BASIC_AUTH_PASSWORD=password # This should be overridden by Render env var
+# This should be overridden by Render env var
+ENV N8N_BASIC_AUTH_PASSWORD=password
 
 # Expose the port n8n runs on
 EXPOSE 5678
