@@ -1,0 +1,13 @@
+[2025-09-07T22:24:59.371-06:00] waitForNavigation begin
+[2025-09-07T22:24:59.371-06:00] waitForNavigation timeout: 5000
+[2025-09-07T22:24:59.382-06:00] waitForNavigation end
+[2025-09-07T22:24:59.383-06:00] screenshotBase64 begin
+[2025-09-07T22:24:59.431-06:00] screenshotBase64 end, cost: 48ms
+[2025-09-07T22:24:59.431-06:00] evaluate function begin
+[2025-09-07T22:24:59.432-06:00] evaluate function end
+[2025-09-07T22:24:59.432-06:00] waitForNavigation begin
+[2025-09-07T22:24:59.432-06:00] waitForNavigation timeout: 5000
+[2025-09-07T22:24:59.435-06:00] waitForNavigation end
+[2025-09-07T22:24:59.435-06:00] evaluate function begin
+[2025-09-07T22:24:59.461-06:00] evaluate function end
+[2025-09-07T22:24:59.461-06:00] getElementsNodeTree end, cost: 26ms

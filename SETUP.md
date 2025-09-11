@@ -1,6 +1,27 @@
 # 🚗 Autosell.mx - Quick Setup Guide
 ## Get Your Development Environment Running in 5 Minutes
 
+## 🌐 **LIVE PRODUCTION SYSTEM**
+
+**The Autosell.mx system is already deployed and running in production!**
+
+### **Access the Live System:**
+- **Frontend Dashboard**: [https://autosell-frontend.onrender.com](https://autosell-frontend.onrender.com)
+- **Backend API**: [https://autosell-backend.onrender.com](https://autosell-backend.onrender.com)
+- **n8n Automation**: [https://autosell-n8n.onrender.com](https://autosell-n8n.onrender.com)
+- **API Documentation**: [https://autosell-backend.onrender.com/docs](https://autosell-backend.onrender.com)
+
+### **System Status:**
+- ✅ **All services deployed** on Render cloud platform
+- ✅ **Database connected** and operational
+- ✅ **Facebook integration** active
+- ✅ **n8n automation** licensed and ready
+- ✅ **SSL certificates** enabled
+
+---
+
+## 🛠️ **LOCAL DEVELOPMENT SETUP**
+
 ---
 
 ## 🚀 **Quick Start (5 minutes)**

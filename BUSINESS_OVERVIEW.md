@@ -14,6 +14,25 @@
 - 🛒 **Updates Facebook Marketplace** daily
 - 🌐 **Keeps your website current** in real-time
 - 📈 **Provides business insights** and market analysis
+- 🤖 **Automates workflows** with n8n integration
+- 📅 **Manages appointments** with Google Calendar sync
+- ☁️ **Runs in the cloud** - accessible anywhere, anytime
+
+---
+
+## 🌐 **LIVE SYSTEM ACCESS**
+
+### **Production URLs:**
+- **Main Dashboard**: [https://autosell-frontend.onrender.com](https://autosell-frontend.onrender.com)
+- **API Documentation**: [https://autosell-backend.onrender.com/docs](https://autosell-backend.onrender.com)
+- **Automation Platform**: [https://autosell-n8n.onrender.com](https://autosell-n8n.onrender.com)
+
+### **System Status:**
+- ✅ **All services deployed** and running on Render cloud platform
+- ✅ **SSL certificates** enabled for secure access
+- ✅ **Database** connected and operational
+- ✅ **Facebook integration** active and posting
+- ✅ **n8n automation** licensed and ready for workflows
 
 ---
 

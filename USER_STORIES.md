@@ -15,6 +15,47 @@ This document contains user stories for the Autosell.mx Vehicle Management & Aut
 
 ## 👨‍💻 **DEVELOPER PERSPECTIVE**
 
+### **Production Deployment Stories**
+
+#### **US-DEV-100: Cloud Platform Deployment**
+**As a developer**, I want to deploy the entire system to a cloud platform so that the application is accessible to users worldwide.
+
+**Acceptance Criteria:**
+- [x] Backend service deployed and accessible via HTTPS
+- [x] Frontend application deployed as static site
+- [x] Database deployed with persistent storage
+- [x] n8n automation platform deployed and licensed
+- [x] All services communicate securely
+- [x] Environment variables properly configured
+- [x] SSL certificates enabled for all services
+
+**Technical Requirements:**
+- [x] Render cloud platform deployment
+- [x] PostgreSQL database with connection pooling
+- [x] Docker containerization for n8n service
+- [x] Environment variable management
+- [x] HTTPS/SSL configuration
+- [x] Domain and subdomain setup
+
+#### **US-DEV-101: Production Environment Configuration**
+**As a developer**, I want to configure production environment variables so that the system runs securely in production.
+
+**Acceptance Criteria:**
+- [x] Database connection strings configured
+- [x] API keys and secrets properly managed
+- [x] CORS origins configured for production
+- [x] Allowed hosts configured for security
+- [x] n8n authentication configured
+- [x] Google API credentials configured
+
+**Technical Requirements:**
+- [x] Secure environment variable storage
+- [x] Database URL configuration
+- [x] CORS middleware configuration
+- [x] TrustedHostMiddleware configuration
+- [x] n8n basic authentication setup
+- [x] Google OAuth credentials
+
 ### **System Architecture Stories**
 
 #### **US-DEV-001: Modular System Architecture**
