@@ -34,24 +34,30 @@ class FacebookAppConfigurator:
                     "title": "Access Facebook Developer Console",
                     "description": f"Log into Facebook Developer Console with your {account_name} credentials",
                     "url": "https://developers.facebook.com",
-                    "action": "Click 'My Apps' → 'Create App'"
+                    "action": "Navigate to the new interface and look for 'Create App' or 'My Apps' option"
                 },
                 {
                     "step": 2,
                     "title": "Create New App",
                     "description": "Create a new Facebook app for this account",
                     "details": {
-                        "app_type": "Business",
+                        "app_type": "Business App (recommended for Autosell.mx)",
                         "app_name": f"Autosell-{account_name.replace(' ', '')}-2025",
                         "contact_email": f"Your {account_name} email address",
-                        "business_account": "Select your business account"
+                        "business_account": "Select your business account",
+                        "note": "Choose 'Business App' from the available options"
                     }
                 },
                 {
                     "step": 3,
-                    "title": "Add Facebook Login Product",
-                    "description": "Add Facebook Login product to your app",
-                    "action": "Products → Add Product → Facebook Login → Set Up"
+                    "title": "Add Required Products",
+                    "description": "Add necessary products to your app",
+                    "action": "Look for 'Products' section and add:",
+                    "products": [
+                        "Facebook Login - For user authentication",
+                        "Pages API - For posting to Facebook pages",
+                        "Marketing API - For advanced features (optional)"
+                    ]
                 },
                 {
                     "step": 4,
