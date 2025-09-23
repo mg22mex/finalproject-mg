@@ -15,13 +15,13 @@ Facebook has updated their developer platform interface. Here's how to navigate 
 ### **Step 2: App Creation Options**
 
 #### **Available App Types:**
-- **Business App** ✅ **RECOMMENDED for Autosell.mx**
-- **Consumer App** - For consumer-facing applications
+- **Consumer App** ✅ **RECOMMENDED for Autosell.mx (No Business Verification)**
+- **Business App** - Requires business verification and paperwork
 - **Gaming App** - For gaming applications
 - **Messenger App** - For Messenger integrations
 
 #### **For Autosell.mx, Choose:**
-- **"Business App"** - This is the best option for your vehicle management system
+- **"Consumer App"** - No business verification required, faster approval
 
 ### **Step 3: Required Products to Add**
 
@@ -40,7 +40,7 @@ Facebook has updated their developer platform interface. Here's how to navigate 
 #### **App Settings:**
 - **App Name**: `Autosell-Auto1-2025` (or Auto2-2025)
 - **Contact Email**: Your account email
-- **Business Account**: Select your business account
+- **Business Account**: Not required for Consumer Apps
 - **App Domains**: `autosell-backend.onrender.com`
 
 #### **OAuth Redirect URIs:**
@@ -68,7 +68,7 @@ Facebook has updated their developer platform interface. Here's how to navigate 
 
 ### **For Auto Account 1:**
 1. **Log in** with Auto Account 1 credentials
-2. **Create Business App**: `Autosell-Auto1-2025`
+2. **Create Consumer App**: `Autosell-Auto1-2025`
 3. **Add Products**: Facebook Login, Pages API
 4. **Configure OAuth URIs**
 5. **Request Permissions**
@@ -76,7 +76,7 @@ Facebook has updated their developer platform interface. Here's how to navigate 
 
 ### **For Auto Account 2:**
 1. **Log in** with Auto Account 2 credentials
-2. **Create Business App**: `Autosell-Auto2-2025`
+2. **Create Consumer App**: `Autosell-Auto2-2025`
 3. **Add Products**: Facebook Login, Pages API
 4. **Configure OAuth URIs**
 5. **Request Permissions**

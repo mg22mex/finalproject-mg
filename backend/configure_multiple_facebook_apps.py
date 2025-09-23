@@ -41,11 +41,11 @@ class FacebookAppConfigurator:
                     "title": "Create New App",
                     "description": "Create a new Facebook app for this account",
                     "details": {
-                        "app_type": "Business App (recommended for Autosell.mx)",
+                        "app_type": "Consumer App (no business verification required)",
                         "app_name": f"Autosell-{account_name.replace(' ', '')}-2025",
                         "contact_email": f"Your {account_name} email address",
-                        "business_account": "Select your business account",
-                        "note": "Choose 'Business App' from the available options"
+                        "business_account": "Not required for Consumer Apps",
+                        "note": "Choose 'Consumer App' from the available options (no business verification needed)"
                     }
                 },
                 {
