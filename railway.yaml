@@ -1,0 +1,40 @@
+databases:
+- name: autosell-db
+  type: postgresql
+  version: '15'
+services:
+- build:
+    builder: nixpacks
+  healthcheck:
+    interval: 30s
+    path: /health
+    timeout: 30s
+  name: autosell-backend
+  source: ./backend
+  variables:
+  - PYTHON_VERSION=3.11.0
+  - PORT=8000
+  - DATABASE_URL=${{Postgres.DATABASE_URL}}
+  - CORS_ORIGINS=https://autosell-frontend.railway.app,http://localhost:3000
+  - ALLOWED_HOSTS=autosell-backend.railway.app,localhost,127.0.0.1
+- build:
+    builder: nixpacks
+  deploy:
+    healthcheckPath: /
+    startCommand: npm run preview
+  name: autosell-frontend
+  source: ./frontend
+  variables:
+  - VITE_API_URL=https://autosell-backend.railway.app
+- build:
+    builder: dockerfile
+  deploy:
+    healthcheckPath: /healthz
+  name: autosell-n8n
+  source: ./Dockerfile.n8n
+  variables:
+  - N8N_BASIC_AUTH_ACTIVE=true
+  - N8N_BASIC_AUTH_USER=admin
+  - N8N_BASIC_AUTH_PASSWORD=AutosellN8n2025!
+  - WEBHOOK_URL=https://autosell-n8n.railway.app
+  - GENERIC_TIMEZONE=America/Mexico_City
