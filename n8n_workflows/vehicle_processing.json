@@ -11,12 +11,15 @@
       "name": "Webhook Trigger",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [240, 300],
+      "position": [
+        240,
+        300
+      ],
       "webhookId": "process-vehicle-webhook"
     },
     {
       "parameters": {
-        "url": "https://autosell-backend.onrender.com/api/vehicles/{{ $json.vehicle_id }}",
+        "url": "http://localhost:8000/api/vehicles/{{ $json.vehicle_id }}",
         "authentication": "none",
         "requestMethod": "GET",
         "options": {}
@@ -25,7 +28,10 @@
       "name": "Get Vehicle Details",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
-      "position": [460, 300]
+      "position": [
+        460,
+        300
+      ]
     },
     {
       "parameters": {
@@ -54,11 +60,14 @@
       "name": "Check Vehicle Status",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
-      "position": [680, 300]
+      "position": [
+        680,
+        300
+      ]
     },
     {
       "parameters": {
-        "url": "https://autosell-n8n.onrender.com/webhook/sync-sheets",
+        "url": "http://localhost:5678/webhook/sync-sheets",
         "authentication": "none",
         "requestMethod": "POST",
         "sendBody": true,
@@ -80,11 +89,14 @@
       "name": "Sync to Sheets",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
-      "position": [900, 200]
+      "position": [
+        900,
+        200
+      ]
     },
     {
       "parameters": {
-        "url": "https://autosell-n8n.onrender.com/webhook/facebook-post",
+        "url": "http://localhost:5678/webhook/facebook-post",
         "authentication": "none",
         "requestMethod": "POST",
         "sendBody": true,
@@ -96,7 +108,7 @@
             },
             {
               "name": "message",
-              "value": "🚗 Nuevo vehículo disponible: {{ $json.year }} {{ $json.make }} {{ $json.model }} - ${{ $json.price }}"
+              "value": "\ud83d\ude97 Nuevo veh\u00edculo disponible: {{ $json.year }} {{ $json.make }} {{ $json.model }} - ${{ $json.price }}"
             },
             {
               "name": "vehicle_id",
@@ -110,11 +122,14 @@
       "name": "Post to Facebook",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
-      "position": [900, 400]
+      "position": [
+        900,
+        400
+      ]
     },
     {
       "parameters": {
-        "url": "https://autosell-backend.onrender.com/api/vehicles/{{ $json.id }}/processing-complete",
+        "url": "http://localhost:8000/api/vehicles/{{ $json.id }}/processing-complete",
         "authentication": "none",
         "requestMethod": "POST",
         "sendBody": true,
@@ -136,7 +151,10 @@
       "name": "Mark Complete",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
-      "position": [1120, 300]
+      "position": [
+        1120,
+        300
+      ]
     }
   ],
   "connections": {

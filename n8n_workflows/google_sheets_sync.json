@@ -1,5 +1,5 @@
 {
-  "name": "Google Sheets Sync Workflow",
+  "name": "Google Sheets Sync",
   "nodes": [
     {
       "parameters": {
@@ -11,12 +11,15 @@
       "name": "Webhook Trigger",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [240, 300],
+      "position": [
+        240,
+        300
+      ],
       "webhookId": "sync-sheets-webhook"
     },
     {
       "parameters": {
-        "url": "https://autosell-backend.onrender.com/api/vehicles",
+        "url": "http://localhost:8000/api/vehicles",
         "authentication": "none",
         "requestMethod": "GET",
         "options": {}
@@ -25,7 +28,10 @@
       "name": "Get Vehicles",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
-      "position": [460, 300]
+      "position": [
+        460,
+        300
+      ]
     },
     {
       "parameters": {
@@ -52,11 +58,14 @@
       "name": "Update Google Sheets",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.1,
-      "position": [680, 300]
+      "position": [
+        680,
+        300
+      ]
     },
     {
       "parameters": {
-        "url": "https://autosell-backend.onrender.com/api/vehicles/{{ $json.id }}/sync-status",
+        "url": "http://localhost:8000/api/vehicles/{{ $json.id }}/sync-status",
         "authentication": "none",
         "requestMethod": "POST",
         "sendBody": true,
@@ -78,7 +87,10 @@
       "name": "Update Sync Status",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
-      "position": [900, 300]
+      "position": [
+        900,
+        300
+      ]
     }
   ],
   "connections": {

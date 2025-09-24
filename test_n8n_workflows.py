@@ -10,11 +10,10 @@ import time
 from datetime import datetime
 
 # n8n webhook URLs
-N8N_BASE_URL = "https://autosell-n8n.onrender.com"
+N8N_BASE_URL = "http://localhost:5678"
 WEBHOOKS = {
     "facebook_post": f"{N8N_BASE_URL}/webhook/facebook-post",
     "sync_sheets": f"{N8N_BASE_URL}/webhook/sync-sheets", 
-    "upload_photos": f"{N8N_BASE_URL}/webhook/upload-photos",
     "process_vehicle": f"{N8N_BASE_URL}/webhook/process-vehicle"
 }
 
@@ -104,31 +103,6 @@ def test_vehicle_processing_workflow():
     
     print()
 
-def test_photo_upload_workflow():
-    """Test photo upload workflow"""
-    print("📸 Testing Photo Upload Workflow...")
-    print("=" * 50)
-    
-    test_data = {
-        "vehicle_id": "test_vehicle_123",
-        "filename": "test_photo.jpg",
-        "folder_id": "test_folder_123"
-    }
-    
-    try:
-        response = requests.post(
-            WEBHOOKS["upload_photos"],
-            json=test_data,
-            timeout=30
-        )
-        print(f"✅ Photo upload workflow triggered: {response.status_code}")
-        if response.text:
-            print(f"   Response: {response.text[:100]}...")
-    except requests.exceptions.RequestException as e:
-        print(f"❌ Photo upload workflow failed: {e}")
-    
-    print()
-
 def main():
     """Main test function"""
     print("🚀 Autosell.mx - n8n Workflow Testing")
@@ -143,12 +117,11 @@ def main():
     test_facebook_workflow()
     test_sheets_sync_workflow()
     test_vehicle_processing_workflow()
-    test_photo_upload_workflow()
     
     print("🎉 n8n Workflow Testing Complete!")
     print("=" * 60)
     print("📋 Next Steps:")
-    print("1. Access n8n dashboard: https://autosell-n8n.onrender.com")
+    print("1. Access n8n dashboard: http://localhost:5678")
     print("2. Import workflow JSON files from n8n_workflows/ folder")
     print("3. Configure OAuth2 credentials for Google services")
     print("4. Test workflows with real data")

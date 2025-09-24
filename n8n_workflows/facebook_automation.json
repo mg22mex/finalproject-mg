@@ -1,5 +1,5 @@
 {
-  "name": "Facebook Auto Posting Workflow",
+  "name": "Facebook Auto Posting",
   "nodes": [
     {
       "parameters": {
@@ -11,7 +11,10 @@
       "name": "Webhook Trigger",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [240, 300],
+      "position": [
+        240,
+        300
+      ],
       "webhookId": "facebook-post-webhook"
     },
     {
@@ -41,11 +44,14 @@
       "name": "Check Account Type",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
-      "position": [460, 300]
+      "position": [
+        460,
+        300
+      ]
     },
     {
       "parameters": {
-        "url": "https://autosell-backend.onrender.com/api/facebook/accounts",
+        "url": "http://localhost:8000/api/facebook/accounts",
         "authentication": "none",
         "requestMethod": "GET",
         "options": {}
@@ -54,7 +60,10 @@
       "name": "Get Facebook Accounts",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
-      "position": [680, 200]
+      "position": [
+        680,
+        200
+      ]
     },
     {
       "parameters": {
@@ -80,11 +89,14 @@
       "name": "Post to Facebook",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
-      "position": [900, 300]
+      "position": [
+        900,
+        300
+      ]
     },
     {
       "parameters": {
-        "url": "https://autosell-backend.onrender.com/api/facebook/log-activity",
+        "url": "http://localhost:8000/api/facebook/log-activity",
         "authentication": "none",
         "requestMethod": "POST",
         "sendBody": true,
@@ -110,7 +122,10 @@
       "name": "Log Activity",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
-      "position": [1120, 300]
+      "position": [
+        1120,
+        300
+      ]
     }
   ],
   "connections": {
