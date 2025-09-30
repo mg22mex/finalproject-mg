@@ -115,48 +115,39 @@ Autosell.mx is a comprehensive vehicle management system that automates inventor
 ### **Iterative Validation Checkpoints:**
 
 ```mermaid
-gantt
-    title Project Timeline with Checkpoints
-    dateFormat  YYYY-MM-DD
-    section Phase 1: Analysis
-    Requirements Gathering    :done, req, 2024-08-01, 3d
-    Architecture Design      :done, arch, after req, 2d
-    Checkpoint 1: Validation :milestone, cp1, after arch, 0d
+graph TD
+    A[Phase 1: Analysis] --> B[Checkpoint 1: Validation ✅]
+    B --> C[Phase 2: Backend]
+    C --> D[Checkpoint 2: Backend ✅]
+    D --> E[Phase 3: Frontend]
+    E --> F[Checkpoint 3: Frontend ✅]
+    F --> G[Phase 4: Integration]
+    G --> H[Checkpoint 4: Integration ✅]
+    H --> I[Phase 5: Testing]
+    I --> J[Checkpoint 5: Testing ✅]
+    J --> K[Phase 6: Documentation]
+    K --> L[Checkpoint 6: Documentation ✅]
+    L --> M[Phase 7: Deployment]
+    M --> N[Checkpoint 7: Deployment ✅]
+    N --> O[Phase 8: Optimization]
+    O --> P[Final Validation ✅]
     
-    section Phase 2: Backend
-    Database Setup          :done, db, after cp1, 2d
-    API Development         :done, api, after db, 3d
-    Checkpoint 2: Backend   :milestone, cp2, after api, 0d
-    
-    section Phase 3: Frontend
-    React Setup            :done, react, after cp2, 2d
-    UI Development         :done, ui, after react, 3d
-    Checkpoint 3: Frontend :milestone, cp3, after ui, 0d
-    
-    section Phase 4: Integration
-    Facebook API           :done, fb, after cp3, 4d
-    Photo Management       :done, photo, after cp3, 3d
-    Checkpoint 4: Integration :milestone, cp4, after fb, 0d
-    
-    section Phase 5: Testing
-    Unit Testing          :done, unit, after cp4, 2d
-    Integration Testing   :done, int, after unit, 2d
-    Checkpoint 5: Testing :milestone, cp5, after int, 0d
-    
-    section Phase 6: Documentation
-    Technical Docs        :done, tech, after cp5, 2d
-    Process Docs          :done, proc, after tech, 2d
-    Checkpoint 6: Documentation :milestone, cp6, after proc, 0d
-    
-    section Phase 7: Deployment
-    Production Setup      :done, prod, after cp6, 3d
-    Hosting Configuration :done, host, after prod, 2d
-    Checkpoint 7: Deployment :milestone, cp7, after host, 0d
-    
-    section Phase 8: Optimization
-    Health Monitoring     :done, health, after cp7, 2d
-    Performance Optimization :done, perf, after health, 2d
-    Final Validation      :milestone, final, after perf, 0d
+    style A fill:#e8f5e8
+    style C fill:#e8f5e8
+    style E fill:#e3f2fd
+    style G fill:#fff3e0
+    style I fill:#f3e5f5
+    style K fill:#e0f2f1
+    style M fill:#ffebee
+    style O fill:#f3e5f5
+    style B fill:#4caf50
+    style D fill:#4caf50
+    style F fill:#4caf50
+    style H fill:#4caf50
+    style J fill:#4caf50
+    style L fill:#4caf50
+    style N fill:#4caf50
+    style P fill:#4caf50
 ```
 
 ### **Quality Metrics Dashboard:**
