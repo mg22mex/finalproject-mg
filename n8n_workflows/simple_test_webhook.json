@@ -1,0 +1,57 @@
+{
+  "name": "Simple Test Webhook",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "test-simple",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ],
+      "webhookId": "test-simple-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Simple test - just log everything\nconst vehicleData = $input.first().json;\n\nconsole.log('=== SIMPLE TEST WEBHOOK ===');\nconsole.log('Received data:', JSON.stringify(vehicleData, null, 2));\nconsole.log('Data type:', typeof vehicleData);\nconsole.log('Data keys:', Object.keys(vehicleData));\n\n// Test each field individually\nconsole.log('marca:', vehicleData.marca);\nconsole.log('modelo:', vehicleData.modelo);\nconsole.log('año:', vehicleData.año);\nconsole.log('color:', vehicleData.color);\nconsole.log('precio:', vehicleData.precio);\nconsole.log('kilometraje:', vehicleData.kilometraje);\nconsole.log('estatus:', vehicleData.estatus);\nconsole.log('ubicacion:', vehicleData.ubicacion);\n\n// Return the data as-is\nreturn [{ json: vehicleData }];"
+      },
+      "id": "log-data",
+      "name": "Log Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Log Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "id": "simple-test-webhook",
+  "tags": []
+}

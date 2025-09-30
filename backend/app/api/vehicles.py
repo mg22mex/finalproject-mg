@@ -79,7 +79,7 @@ async def get_vehicles(
         vehicles = query.order_by(Vehicle.created_at.desc()).offset(skip).limit(limit).all()
         
         # Convert to response format
-        vehicle_list = [VehicleResponse.from_orm(vehicle) for vehicle in vehicles]
+        vehicle_list = [VehicleResponse.model_validate(vehicle) for vehicle in vehicles]
         
         logger.info(f"Retrieved {len(vehicle_list)} vehicles (total: {total})")
         
@@ -115,7 +115,7 @@ async def get_vehicle(
             )
         
         logger.info(f"Retrieved vehicle {vehicle_id}: {vehicle.display_name}")
-        return VehicleResponse.from_orm(vehicle)
+        return VehicleResponse.model_validate(vehicle)
         
     except HTTPException:
         raise
@@ -151,7 +151,7 @@ async def create_vehicle(
         db.refresh(vehicle)
         
         logger.info(f"Created vehicle {vehicle.id}: {vehicle.display_name}")
-        return VehicleResponse.from_orm(vehicle)
+        return VehicleResponse.model_validate(vehicle)
         
     except HTTPException:
         raise
@@ -205,7 +205,7 @@ async def update_vehicle(
         db.refresh(vehicle)
         
         logger.info(f"Updated vehicle {vehicle_id}: {vehicle.display_name}")
-        return VehicleResponse.from_orm(vehicle)
+        return VehicleResponse.model_validate(vehicle)
         
     except HTTPException:
         raise
@@ -289,7 +289,7 @@ async def update_vehicle_status(
         db.refresh(vehicle)
         
         logger.info(f"Updated status for vehicle {vehicle_id} to {status_update.estatus}")
-        return VehicleResponse.from_orm(vehicle)
+        return VehicleResponse.model_validate(vehicle)
         
     except HTTPException:
         raise
@@ -316,7 +316,7 @@ async def get_vehicles_by_status(
         total = query.count()
         
         vehicles = query.order_by(Vehicle.created_at.desc()).offset(skip).limit(limit).all()
-        vehicle_list = [VehicleResponse.from_orm(vehicle) for vehicle in vehicles]
+        vehicle_list = [VehicleResponse.model_validate(vehicle) for vehicle in vehicles]
         
         logger.info(f"Retrieved {len(vehicle_list)} vehicles with status {estatus}")
         
@@ -357,7 +357,7 @@ async def search_vehicles(
         total = db_query.count()
         
         vehicles = db_query.order_by(Vehicle.created_at.desc()).offset(skip).limit(limit).all()
-        vehicle_list = [VehicleResponse.from_orm(vehicle) for vehicle in vehicles]
+        vehicle_list = [VehicleResponse.model_validate(vehicle) for vehicle in vehicles]
         
         logger.info(f"Search '{query}' returned {len(vehicle_list)} vehicles")
         
@@ -373,4 +373,206 @@ async def search_vehicles(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error while searching vehicles"
+        )
+
+@router.post("/sync-from-sheets")
+async def sync_vehicles_from_sheets(
+    vehicles: List[dict],
+    db: Session = Depends(get_db)
+):
+    """
+    Sync vehicles from Google Sheets to backend database
+    This replaces all existing vehicles with data from Google Sheets
+    """
+    try:
+        logger.info(f"Starting sync of {len(vehicles)} vehicles from Google Sheets")
+        
+        # Clear existing vehicles (except those with external_id starting with 'GS_')
+        existing_gs_vehicles = db.query(Vehicle).filter(
+            Vehicle.external_id.like('GS_%')
+        ).all()
+        
+        for vehicle in existing_gs_vehicles:
+            db.delete(vehicle)
+        
+        # Commit the deletion before inserting new vehicles
+        db.commit()
+        
+        # Add new vehicles from Google Sheets (process one by one)
+        synced_count = 0
+        failed_count = 0
+        
+        for i, vehicle_data in enumerate(vehicles):
+            try:
+                # Validate and clean data
+                año = vehicle_data.get('año')
+                if año is None or año == '' or año == 0:
+                    año = 2000  # Default year
+                elif isinstance(año, str):
+                    try:
+                        año = int(año)
+                    except ValueError:
+                        año = 2000
+                
+                precio = vehicle_data.get('precio', 0)
+                if precio is None or precio == '' or precio == 'INFO':
+                    precio = 0
+                elif isinstance(precio, str):
+                    try:
+                        precio = float(precio.replace('$', '').replace(',', ''))
+                    except ValueError:
+                        precio = 0
+                
+                kilometraje = vehicle_data.get('kilometraje', '')
+                if kilometraje is None:
+                    kilometraje = ''
+                else:
+                    kilometraje = str(kilometraje)
+                
+                # Create new vehicle
+                vehicle = Vehicle(
+                    external_id=vehicle_data.get('external_id'),
+                    marca=str(vehicle_data.get('marca', '')),
+                    modelo=str(vehicle_data.get('modelo', '')),
+                    año=año,
+                    color=str(vehicle_data.get('color', '')),
+                    precio=precio,
+                    kilometraje=kilometraje,
+                    estatus=VehicleStatus(vehicle_data.get('estatus', 'DISPONIBLE')),
+                    ubicacion=str(vehicle_data.get('ubicacion', '')),
+                    descripcion=str(vehicle_data.get('descripcion', '')),
+                )
+                
+                db.add(vehicle)
+                db.flush()  # Flush to catch errors early
+                synced_count += 1
+                
+                # Log progress every 10 vehicles
+                if (i + 1) % 10 == 0:
+                    logger.info(f"Processed {i + 1}/{len(vehicles)} vehicles...")
+                
+            except Exception as e:
+                failed_count += 1
+                logger.error(f"Error processing vehicle {i + 1}: {vehicle_data}")
+                logger.error(f"Error details: {e}")
+                continue
+        
+        # Commit all changes
+        db.commit()
+        
+        if failed_count > 0:
+            logger.warning(f"Failed to process {failed_count} vehicles")
+        
+        logger.info(f"Successfully synced {synced_count} vehicles from Google Sheets")
+        
+        return {
+            "message": f"Successfully synced {synced_count} vehicles from Google Sheets",
+            "synced_count": synced_count,
+            "total_vehicles": len(vehicles)
+        }
+        
+    except Exception as e:
+        logger.error(f"Error syncing vehicles from Google Sheets: {e}")
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error syncing vehicles: {str(e)}"
+        )
+
+@router.post("/{vehicle_identifier}/remove-from-autosell")
+async def remove_vehicle_from_autosell(
+    vehicle_identifier: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Remove vehicle from Autosell.mx (mark as unavailable)
+    """
+    try:
+        # Try to find by external_id first, then by ID
+        vehicle = db.query(Vehicle).filter(Vehicle.external_id == vehicle_identifier).first()
+        
+        if not vehicle:
+            # Try by ID if external_id not found
+            try:
+                vehicle_id = int(vehicle_identifier)
+                vehicle = db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()
+            except ValueError:
+                pass
+        
+        if not vehicle:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Vehicle with identifier {vehicle_identifier} not found"
+            )
+        
+        # Mark as sold
+        vehicle.estatus = VehicleStatus.VENDIDO
+        
+        db.commit()
+        
+        logger.info(f"Vehicle {vehicle_identifier} removed from Autosell.mx")
+        
+        return {
+            "message": f"Vehicle {vehicle_identifier} removed from Autosell.mx",
+            "vehicle_id": vehicle.id,
+            "status": "removed"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error removing vehicle {vehicle_identifier} from Autosell: {e}")
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error removing vehicle: {str(e)}"
+        )
+
+@router.post("/{vehicle_identifier}/remove-from-facebook")
+async def remove_vehicle_from_facebook(
+    vehicle_identifier: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Remove vehicle from Facebook (mark for deletion)
+    """
+    try:
+        # Try to find by external_id first, then by ID
+        vehicle = db.query(Vehicle).filter(Vehicle.external_id == vehicle_identifier).first()
+        
+        if not vehicle:
+            # Try by ID if external_id not found
+            try:
+                vehicle_id = int(vehicle_identifier)
+                vehicle = db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()
+            except ValueError:
+                pass
+        
+        if not vehicle:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Vehicle with identifier {vehicle_identifier} not found"
+            )
+        
+        # Mark for Facebook deletion
+        vehicle.estatus = VehicleStatus.VENDIDO
+        
+        db.commit()
+        
+        logger.info(f"Vehicle {vehicle_identifier} marked for Facebook deletion")
+        
+        return {
+            "message": f"Vehicle {vehicle_identifier} marked for Facebook deletion",
+            "vehicle_id": vehicle.id,
+            "status": "marked_for_deletion"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error marking vehicle {vehicle_identifier} for Facebook deletion: {e}")
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error marking vehicle for deletion: {str(e)}"
         )

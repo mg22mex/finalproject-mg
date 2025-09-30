@@ -59,7 +59,7 @@ def init_db():
         # Import all models to ensure they are registered
         from .models import Vehicle, Photo, StatusHistory, SocialPost, MarketplaceListing
         from .models import User, ApiKey, AutomationWorkflow, WorkflowExecution
-        from .models import AnalyticsData, MarketIntelligence
+        from .models import AnalyticsData, MarketIntelligence, FacebookAccount
         
         # Create all tables
         Base.metadata.create_all(bind=engine)

@@ -30,13 +30,13 @@ def configure_auto_account_1_account():
             print(f"Creating new account: Auto Account 1")
             account = FacebookAccount(
                 name="Auto Account 1",
-                account_type="auto"  # or "manual" for manual account
+                account_type="auto"  # Keep as auto account
             )
             db.add(account)
         
         # Update credentials
-        account.app_id = "YOUR_APP_ID_HERE"
-        account.app_secret = "YOUR_APP_SECRET_HERE"
+        account.app_id = "836369139089073"
+        account.app_secret = "a408069870c77014982549676d5b3d95"
         account.is_active = True
         
         # Commit changes

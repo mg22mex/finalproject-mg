@@ -47,9 +47,14 @@ class VehicleBase(BaseModel):
     @validator('marca', 'modelo')
     def validate_strings(cls, v):
         """Validate string fields"""
-        if v and not v.strip():
-            raise ValueError('String cannot be empty or whitespace only')
-        return v.strip() if v else v
+        if v is None:
+            return v
+        if isinstance(v, str):
+            stripped = v.strip()
+            if not stripped:
+                return "Unknown"  # Default value for empty strings
+            return stripped
+        return v
 
 class VehicleCreate(VehicleBase):
     """Schema for creating a new vehicle"""

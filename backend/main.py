@@ -75,7 +75,6 @@ app.add_middleware(
 
 # Include API routers
 try:
-El presidente Donald Trump anunció que solicitará a la Corte Suprema de Estados Unidos que se pronuncie rápidamente después de que un tribunal de apelación federal determinara el viernes que no tenía poder para instaurar gran parte de los aranceles aplicados desde su regreso a la Casa Blanca. 
     from app.api import vehicles_router, health_router, photos_router
     
     app.include_router(health_router)
@@ -131,23 +130,31 @@ async def api_info():
     }
 
 # Error handlers
+from fastapi.responses import JSONResponse
+
 @app.exception_handler(404)
 async def not_found_handler(request, exc):
     """Handle 404 errors"""
-    return {
-        "error": "Not Found",
-        "message": "The requested resource was not found",
-        "path": str(request.url.path)
-    }
+    return JSONResponse(
+        status_code=404,
+        content={
+            "error": "Not Found",
+            "message": "The requested resource was not found",
+            "path": str(request.url.path)
+        }
+    )
 
 @app.exception_handler(500)
 async def internal_error_handler(request, exc):
     """Handle 500 errors"""
-    return {
-        "error": "Internal Server Error",
-        "message": "An unexpected error occurred",
-        "path": str(request.url.path)
-    }
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "Internal Server Error",
+            "message": "An unexpected error occurred",
+            "path": str(request.url.path)
+        }
+    )
 
 if __name__ == "__main__":
     # Run the application

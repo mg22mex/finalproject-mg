@@ -1,565 +1,436 @@
-# 🚗 Autosell.mx - User Stories & Requirements
-## Complete User Requirements from Multiple Perspectives
+# 👥 Autosell.mx - User Stories
 
----
+## 📋 **User Story Overview**
 
-## 📋 **DOCUMENT OVERVIEW**
+This document defines the complete user stories for Autosell.mx, a comprehensive vehicle management and automation system. These stories capture the needs, expectations, and workflows of all system users.
 
-This document contains user stories for the Autosell.mx Vehicle Management & Automation System, written from three different perspectives:
+## 🎯 **User Personas**
 
-1. **👨‍💻 Developer Perspective** - Technical implementation requirements
-2. **👤 User Perspective** - End-user experience and workflow requirements  
-3. **🏢 Client Perspective** - Business stakeholder and ROI requirements
+### **Primary Users**
+- **Car Dealership Owner**: Manages inventory and sales operations
+- **Sales Manager**: Handles vehicle listings and customer interactions
+- **Inventory Manager**: Manages vehicle data and status updates
+- **Marketing Manager**: Oversees social media and marketplace presence
 
----
+### **Secondary Users**
+- **Independent Car Dealer**: Manages personal vehicle inventory
+- **Fleet Manager**: Oversees company vehicle fleet
+- **Auto Broker**: Manages multiple vehicle listings
+- **System Administrator**: Manages system configuration and maintenance
 
-## 👨‍💻 **DEVELOPER PERSPECTIVE**
+## 📖 **Epic 1: Vehicle Management**
 
-### **Production Deployment Stories**
-
-#### **US-DEV-100: Cloud Platform Deployment**
-**As a developer**, I want to deploy the entire system to a cloud platform so that the application is accessible to users worldwide.
+### **Story 1.1: Add New Vehicle**
+**As a** car dealership owner  
+**I want to** add a new vehicle to the inventory  
+**So that** I can track and manage vehicle information  
 
 **Acceptance Criteria:**
-- [x] Backend service deployed and accessible via HTTPS
-- [x] Frontend application deployed as static site
-- [x] Database deployed with persistent storage
-- [x] n8n automation platform deployed and licensed
-- [x] All services communicate securely
-- [x] Environment variables properly configured
-- [x] SSL certificates enabled for all services
+- ✅ I can access the vehicle management interface
+- ✅ I can fill out a comprehensive vehicle form
+- ✅ I can upload multiple photos of the vehicle
+- ✅ I can set the initial status (Disponible, FOTOS, etc.)
+- ✅ The vehicle is automatically saved to the database
+- ✅ The vehicle appears in the inventory list
+- ✅ The vehicle is synced to Google Sheets
+- ✅ The vehicle is posted to Facebook Marketplace
 
 **Technical Requirements:**
-- [x] Render cloud platform deployment
-- [x] PostgreSQL database with connection pooling
-- [x] Docker containerization for n8n service
-- [x] Environment variable management
-- [x] HTTPS/SSL configuration
-- [x] Domain and subdomain setup
+- Frontend form with validation
+- Backend API endpoint for vehicle creation
+- Database storage with proper relationships
+- Google Sheets integration
+- Facebook posting automation
 
-#### **US-DEV-101: Production Environment Configuration**
-**As a developer**, I want to configure production environment variables so that the system runs securely in production.
+### **Story 1.2: Edit Vehicle Information**
+**As a** sales manager  
+**I want to** edit vehicle information  
+**So that** I can keep vehicle data up-to-date  
 
 **Acceptance Criteria:**
-- [x] Database connection strings configured
-- [x] API keys and secrets properly managed
-- [x] CORS origins configured for production
-- [x] Allowed hosts configured for security
-- [x] n8n authentication configured
-- [x] Google API credentials configured
+- ✅ I can select a vehicle from the inventory list
+- ✅ I can edit all vehicle fields (price, description, etc.)
+- ✅ I can update vehicle photos
+- ✅ I can change vehicle status
+- ✅ Changes are saved to the database
+- ✅ Changes are synced to Google Sheets
+- ✅ Facebook posts are updated if needed
 
 **Technical Requirements:**
-- [x] Secure environment variable storage
-- [x] Database URL configuration
-- [x] CORS middleware configuration
-- [x] TrustedHostMiddleware configuration
-- [x] n8n basic authentication setup
-- [x] Google OAuth credentials
+- Frontend edit form
+- Backend API endpoint for updates
+- Database update operations
+- Google Sheets sync
+- Facebook post updates
 
-### **System Architecture Stories**
-
-#### **US-DEV-001: Modular System Architecture**
-**As a developer**, I want a modular, scalable system architecture so that I can easily maintain and extend the application over time.
+### **Story 1.3: Delete Vehicle**
+**As a** inventory manager  
+**I want to** remove a vehicle from the system  
+**So that** I can clean up sold or removed vehicles  
 
 **Acceptance Criteria:**
-- [ ] System follows microservices architecture principles
-- [ ] Each component has clear interfaces and dependencies
-- [ ] Database layer is abstracted through ORM
-- [ ] API endpoints follow RESTful conventions
-- [ ] Configuration is externalized and environment-specific
+- ✅ I can select a vehicle for deletion
+- ✅ I can confirm the deletion action
+- ✅ The vehicle is removed from the database
+- ✅ The vehicle is removed from Google Sheets
+- ✅ The vehicle is removed from Facebook Marketplace
+- ✅ All associated photos are removed
 
 **Technical Requirements:**
-- Use dependency injection for loose coupling
-- Implement repository pattern for data access
-- Follow SOLID principles in code design
-- Use environment variables for configuration
-- Implement proper error handling and logging
+- Frontend deletion confirmation
+- Backend API endpoint for deletion
+- Database cascade deletion
+- Google Sheets removal
+- Facebook post removal
 
----
-
-#### **US-DEV-002: Database Design & Migration**
-**As a developer**, I want a well-designed database schema with migration support so that I can manage data structure changes safely.
+### **Story 1.4: Search and Filter Vehicles**
+**As a** sales manager  
+**I want to** search and filter vehicles  
+**So that** I can quickly find specific vehicles  
 
 **Acceptance Criteria:**
-- [ ] Database schema is normalized and follows best practices
-- [ ] Migration files exist for all schema changes
-- [ ] Seed data is available for development and testing
-- [ ] Database indexes are optimized for common queries
-- [ ] Backup and recovery procedures are documented
+- ✅ I can search by brand, model, year, or description
+- ✅ I can filter by status (Disponible, Vendido, etc.)
+- ✅ I can filter by price range
+- ✅ I can filter by location
+- ✅ I can combine multiple filters
+- ✅ Search results are displayed instantly
+- ✅ I can sort results by different criteria
 
 **Technical Requirements:**
-- Use PostgreSQL as primary database
-- Implement Prisma ORM for type-safe database access
-- Create migration scripts for all schema changes
-- Include seed data for development environment
-- Document database backup procedures
+- Frontend search interface
+- Backend search API with filters
+- Database query optimization
+- Real-time search results
 
----
+## 📖 **Epic 2: Photo Management**
 
-#### **US-DEV-003: API Design & Documentation**
-**As a developer**, I want well-designed APIs with comprehensive documentation so that frontend developers can integrate easily.
+### **Story 2.1: Upload Vehicle Photos**
+**As a** inventory manager  
+**I want to** upload multiple photos for each vehicle  
+**So that** I can showcase vehicles effectively  
 
 **Acceptance Criteria:**
-- [ ] All API endpoints follow consistent naming conventions
-- [ ] Request/response schemas are documented
-- [ ] Error responses follow standard HTTP status codes
-- [ ] API versioning strategy is implemented
-- [ ] Swagger/OpenAPI documentation is generated
+- ✅ I can drag and drop multiple photos
+- ✅ I can select photos from my computer
+- ✅ Photos are automatically optimized
+- ✅ Photos are stored in Google Drive
+- ✅ Photos are associated with the vehicle
+- ✅ I can set photo order/priority
+- ✅ I can preview photos before saving
 
 **Technical Requirements:**
-- Use FastAPI for automatic API documentation
-- Implement proper HTTP status codes
-- Include request/response validation
-- Add API rate limiting and authentication
-- Generate OpenAPI 3.0 specification
+- Drag-and-drop upload interface
+- Google Drive API integration
+- Image optimization
+- Photo association with vehicles
+- Order management system
 
----
-
-### **Development Workflow Stories**
-
-#### **US-DEV-004: Testing Infrastructure**
-**As a developer**, I want comprehensive testing infrastructure so that I can ensure code quality and prevent regressions.
+### **Story 2.2: Manage Vehicle Photos**
+**As a** sales manager  
+**I want to** manage vehicle photos  
+**So that** I can control how vehicles are displayed  
 
 **Acceptance Criteria:**
-- [ ] Unit tests cover all business logic
-- [ ] Integration tests cover API endpoints
-- [ ] End-to-end tests cover user workflows
-- [ ] Test coverage is above 80%
-- [ ] Tests run automatically in CI/CD pipeline
+- ✅ I can view all photos for a vehicle
+- ✅ I can reorder photos by dragging
+- ✅ I can delete unwanted photos
+- ✅ I can add new photos to existing vehicles
+- ✅ I can set a primary photo
+- ✅ Changes are saved automatically
 
 **Technical Requirements:**
-- Use Jest for JavaScript/TypeScript testing
-- Use PyTest for Python backend testing
-- Use Cypress for end-to-end testing
-- Implement test data factories
-- Set up automated testing in GitHub Actions
+- Photo gallery interface
+- Drag-and-drop reordering
+- Photo deletion functionality
+- Primary photo selection
+- Automatic save functionality
 
----
+## 📖 **Epic 3: Status Management**
 
-#### **US-DEV-005: Code Quality & Standards**
-**As a developer**, I want automated code quality checks so that I can maintain consistent code standards across the team.
+### **Story 3.1: Update Vehicle Status**
+**As a** sales manager  
+**I want to** update vehicle status  
+**So that** I can track vehicle lifecycle  
 
 **Acceptance Criteria:**
-- [ ] ESLint/Prettier configured for frontend
-- [ ] Black/Flake8 configured for Python backend
-- [ ] Pre-commit hooks prevent low-quality code
-- [ ] Code coverage reports are generated
-- [ ] SonarQube or similar tool is integrated
+- ✅ I can change status from Disponible to Vendido
+- ✅ I can change status to Apartado (reserved)
+- ✅ I can change status to AUSENTE (temporarily unavailable)
+- ✅ Status changes are saved to database
+- ✅ Status changes are synced to Google Sheets
+- ✅ Status changes trigger appropriate actions
 
 **Technical Requirements:**
-- Configure ESLint with TypeScript rules
-- Set up Prettier for code formatting
-- Implement pre-commit hooks with Husky
-- Generate code coverage reports
-- Integrate with code quality tools
+- Status update interface
+- Backend status update API
+- Database status tracking
+- Google Sheets sync
+- Status-based automation
 
----
-
-#### **US-DEV-006: Deployment & Infrastructure**
-**As a developer**, I want automated deployment and infrastructure management so that I can deploy changes safely and quickly.
+### **Story 3.2: Automated Status Actions**
+**As a** system administrator  
+**I want to** automate status-based actions  
+**So that** the system handles routine tasks automatically  
 
 **Acceptance Criteria:**
-- [ ] CI/CD pipeline runs on every commit
-- [ ] Infrastructure is defined as code (IaC)
-- [ ] Environment-specific configurations are managed
-- [ ] Rollback procedures are documented
-- [ ] Monitoring and alerting are configured
+- ✅ When status changes to "Vendido", vehicle is removed from Autosell.mx
+- ✅ When status changes to "Vendido", Facebook post is removed
+- ✅ When status changes to "Disponible", vehicle is posted to Facebook
+- ✅ All actions are logged for tracking
+- ✅ Manual override is available if needed
 
 **Technical Requirements:**
-- Use GitHub Actions for CI/CD
-- Use Docker for containerization
-- Use Terraform or similar for IaC
-- Implement blue-green deployment
-- Set up monitoring with Prometheus/Grafana
+- Status monitoring system
+- Automated action triggers
+- Facebook post management
+- Action logging
+- Manual override functionality
 
----
+## 📖 **Epic 4: Google Sheets Integration**
 
-## 👤 **USER PERSPECTIVE**
-
-### **Vehicle Management Stories**
-
-#### **US-USER-001: Add New Vehicle**
-**As a salesperson**, I want to easily add new vehicles to the system so that I can quickly update inventory when new cars arrive.
+### **Story 4.1: Sync Inventory to Google Sheets**
+**As a** inventory manager  
+**I want to** sync vehicle data to Google Sheets  
+**So that** I can manage inventory in my preferred spreadsheet  
 
 **Acceptance Criteria:**
-- [ ] I can upload multiple photos of the vehicle
-- [ ] I can enter vehicle details (make, model, year, price, etc.)
-- [ ] I can specify the vehicle status (available, reserved, sold)
-- [ ] I can add location and contact information
-- [ ] The system automatically organizes photos and creates listings
+- ✅ Vehicle data is automatically synced to Google Sheets
+- ✅ New vehicles are added to the spreadsheet
+- ✅ Updated vehicles are modified in the spreadsheet
+- ✅ Status changes are reflected in the spreadsheet
+- ✅ Sync happens in real-time
+- ✅ I can manually trigger sync if needed
 
-**User Experience:**
-- Simple, intuitive form interface
-- Drag-and-drop photo upload
-- Auto-save functionality
-- Clear validation messages
-- Success confirmation
+**Technical Requirements:**
+- Google Sheets API integration
+- Real-time sync functionality
+- Manual sync trigger
+- Data mapping between systems
+- Error handling and recovery
 
----
-
-#### **US-USER-002: Update Vehicle Information**
-**As a salesperson**, I want to update vehicle information easily so that I can keep inventory current and accurate.
-
-**Acceptance Criteria:**
-- [ ] I can edit any vehicle field (price, status, location, etc.)
-- [ ] I can add or remove photos
-- [ ] I can update vehicle status (available → sold)
-- [ ] Changes are reflected immediately across all platforms
-- [ ] I can see a history of changes made
-
-**User Experience:**
-- Inline editing capabilities
-- Bulk update options
-- Change history tracking
-- Real-time synchronization
-- Confirmation dialogs
-
----
-
-#### **US-USER-003: Manage Vehicle Photos**
-**As a salesperson**, I want to manage vehicle photos efficiently so that I can showcase vehicles professionally.
+### **Story 4.2: Import from Google Sheets**
+**As a** system administrator  
+**I want to** import vehicle data from Google Sheets  
+**So that** I can bulk update inventory information  
 
 **Acceptance Criteria:**
-- [ ] I can upload multiple photos at once
-- [ ] I can reorder photos to set the main image
-- [ ] I can crop and resize photos if needed
-- [ ] I can delete unwanted photos
-- [ ] Photos are automatically optimized for web
+- ✅ I can trigger import from Google Sheets
+- ✅ All vehicles in the spreadsheet are imported
+- ✅ Existing vehicles are updated with new data
+- ✅ New vehicles are added to the database
+- ✅ Import process is logged and tracked
+- ✅ I can preview changes before importing
 
-**User Experience:**
-- Drag-and-drop interface
-- Photo preview and editing
-- Bulk operations
-- Auto-optimization
-- Storage management
+**Technical Requirements:**
+- Google Sheets read functionality
+- Bulk import processing
+- Data validation and mapping
+- Import logging
+- Preview functionality
 
----
+## 📖 **Epic 5: Facebook Integration**
 
-### **Inventory Management Stories**
-
-#### **US-USER-004: View Current Inventory**
-**As a manager**, I want to see the current inventory status at a glance so that I can make informed business decisions.
-
-**Acceptance Criteria:**
-- [ ] I can see all vehicles in a searchable, filterable list
-- [ ] I can filter by status, make, model, price range, etc.
-- [ ] I can see key metrics (total vehicles, available, sold, etc.)
-- [ ] I can export inventory data for reporting
-- [ ] I can see real-time updates
-
-**User Experience:**
-- Clean, organized dashboard
-- Advanced filtering options
-- Sortable columns
-- Export functionality
-- Real-time updates
-
----
-
-#### **US-USER-005: Track Vehicle Status Changes**
-**As a manager**, I want to track when and why vehicle statuses change so that I can monitor sales performance and inventory flow.
+### **Story 5.1: Post Vehicle to Facebook**
+**As a** marketing manager  
+**I want to** post vehicles to Facebook Marketplace  
+**So that** I can reach more potential customers  
 
 **Acceptance Criteria:**
-- [ ] I can see a timeline of status changes for each vehicle
-- [ ] I can see who made each change and when
-- [ ] I can add notes or reasons for status changes
-- [ ] I can filter by date range and status type
-- [ ] I can export status change reports
+- ✅ Vehicles are automatically posted to Facebook
+- ✅ Posts include vehicle photos and description
+- ✅ Posts are formatted professionally
+- ✅ Posts are posted to multiple Facebook accounts
+- ✅ Posting schedule is configurable
+- ✅ Posts are tracked and managed
 
-**User Experience:**
-- Timeline view of changes
-- User attribution
-- Note-taking capability
-- Advanced filtering
-- Report generation
+**Technical Requirements:**
+- Facebook Graph API integration
+- Multi-account posting
+- Post formatting and customization
+- Scheduling system
+- Post tracking and management
 
----
-
-### **Social Media Management Stories**
-
-#### **US-USER-006: Monitor Social Media Posts**
-**As a marketing manager**, I want to monitor social media posting status so that I can ensure consistent online presence.
+### **Story 5.2: Manage Facebook Posts**
+**As a** marketing manager  
+**I want to** manage Facebook posts  
+**So that** I can control social media presence  
 
 **Acceptance Criteria:**
-- [ ] I can see all posts across all platforms
-- [ ] I can see which posts are active, pending, or failed
-- [ ] I can manually trigger reposting if needed
-- [ ] I can see engagement metrics for posts
-- [ ] I can schedule posts for specific times
+- ✅ I can view all Facebook posts
+- ✅ I can remove posts when vehicles are sold
+- ✅ I can update post content
+- ✅ I can schedule posts for specific times
+- ✅ I can track post performance
+- ✅ I can manage multiple Facebook accounts
 
-**User Experience:**
-- Unified social media dashboard
-- Status indicators
-- Manual controls
+**Technical Requirements:**
+- Facebook post management
+- Post removal functionality
+- Post updating capabilities
+- Scheduling system
+- Performance tracking
+- Multi-account management
+
+## 📖 **Epic 6: System Administration**
+
+### **Story 6.1: Configure System Settings**
+**As a** system administrator  
+**I want to** configure system settings  
+**So that** the system works according to business needs  
+
+**Acceptance Criteria:**
+- ✅ I can configure Google Sheets integration
+- ✅ I can configure Facebook accounts
+- ✅ I can set up automation schedules
+- ✅ I can configure notification settings
+- ✅ I can manage user access
+- ✅ I can backup and restore data
+
+**Technical Requirements:**
+- Configuration management interface
+- Google Sheets setup
+- Facebook account configuration
+- Schedule management
+- Notification system
+- User management
+- Backup and restore functionality
+
+### **Story 6.2: Monitor System Health**
+**As a** system administrator  
+**I want to** monitor system health  
+**So that** I can ensure optimal performance  
+
+**Acceptance Criteria:**
+- ✅ I can view system status dashboard
+- ✅ I can monitor API performance
+- ✅ I can track database performance
+- ✅ I can view error logs
+- ✅ I can monitor automation workflows
+- ✅ I can receive alerts for issues
+
+**Technical Requirements:**
+- System monitoring dashboard
 - Performance metrics
-- Scheduling interface
+- Error logging and tracking
+- Alert system
+- Health check endpoints
+- Workflow monitoring
 
----
+## 📖 **Epic 7: Reporting and Analytics**
 
-#### **US-USER-007: Manage Post Content**
-**As a marketing manager**, I want to customize post content and templates so that I can maintain brand consistency.
-
-**Acceptance Criteria:**
-- [ ] I can edit post templates for different platforms
-- [ ] I can customize messages for different vehicle types
-- [ ] I can add hashtags and mentions
-- [ ] I can preview posts before they go live
-- [ ] I can A/B test different content
-
-**User Experience:**
-- Template editor
-- Content preview
-- Platform-specific customization
-- Hashtag management
-- Testing tools
-
----
-
-## 🏢 **CLIENT PERSPECTIVE**
-
-### **Business Value Stories**
-
-#### **US-CLIENT-001: Increase Sales Revenue**
-**As a business owner**, I want to increase sales revenue through better online visibility so that I can grow my dealership business.
+### **Story 7.1: View Inventory Reports**
+**As a** car dealership owner  
+**I want to** view inventory reports  
+**So that** I can make informed business decisions  
 
 **Acceptance Criteria:**
-- [ ] System posts to multiple social media platforms automatically
-- [ ] Website inventory is always current and accurate
-- [ ] Facebook Marketplace listings are managed daily
-- [ ] Customer inquiries increase by at least 30%
-- [ ] Sales conversion rate improves by at least 20%
+- ✅ I can view total vehicle count
+- ✅ I can see vehicles by status
+- ✅ I can view vehicles by brand/model
+- ✅ I can see price range distribution
+- ✅ I can export reports to Excel/PDF
+- ✅ I can schedule automated reports
 
-**Business Metrics:**
-- Monthly sales volume
-- Customer inquiry volume
-- Website traffic
-- Social media engagement
-- Conversion rates
+**Technical Requirements:**
+- Reporting dashboard
+- Data aggregation
+- Export functionality
+- Automated reporting
+- Chart and graph visualization
+- PDF generation
 
----
-
-#### **US-CLIENT-002: Reduce Operational Costs**
-**As a business owner**, I want to reduce the time spent on manual marketing tasks so that I can focus on sales and customer service.
-
-**Acceptance Criteria:**
-- [ ] Manual social media posting time reduced by 80%
-- [ ] Inventory management time reduced by 60%
-- [ ] Photo organization time reduced by 70%
-- [ ] Overall marketing overhead reduced by 50%
-- [ ] Staff can focus on customer-facing activities
-
-**Business Metrics:**
-- Staff time allocation
-- Marketing overhead costs
-- Customer service metrics
-- Sales team productivity
-- Overall operational efficiency
-
----
-
-#### **US-CLIENT-003: Improve Customer Experience**
-**As a business owner**, I want to provide a better customer experience through consistent, professional online presence so that I can build customer trust and loyalty.
+### **Story 7.2: Track Sales Performance**
+**As a** sales manager  
+**I want to** track sales performance  
+**So that** I can measure team effectiveness  
 
 **Acceptance Criteria:**
-- [ ] Website always shows current inventory
-- [ ] Social media presence is consistent and professional
-- [ ] Customer inquiries are responded to quickly
-- [ ] Vehicle information is accurate and complete
-- [ ] Customer satisfaction scores improve
+- ✅ I can view sales by time period
+- ✅ I can track vehicles sold per month
+- ✅ I can see average time to sale
+- ✅ I can view performance by salesperson
+- ✅ I can compare performance across periods
+- ✅ I can export performance data
 
-**Business Metrics:**
-- Customer satisfaction scores
-- Website usability metrics
-- Social media engagement
-- Customer retention rates
-- Online review scores
+**Technical Requirements:**
+- Sales tracking system
+- Performance metrics
+- Time-based analysis
+- Comparative reporting
+- Data export functionality
+- Performance visualization
 
----
+## 📖 **Epic 8: Mobile Access**
 
-### **Competitive Advantage Stories**
-
-#### **US-CLIENT-004: Market Intelligence**
-**As a business owner**, I want market intelligence and competitive insights so that I can make informed pricing and inventory decisions.
-
-**Acceptance Criteria:**
-- [ ] System provides market analysis reports
-- [ ] Competitive pricing information is available
-- [ ] Inventory trend analysis is provided
-- [ ] Pricing recommendations are generated
-- [ ] Market opportunity alerts are sent
-
-**Business Metrics:**
-- Market share analysis
-- Competitive positioning
-- Pricing optimization
-- Inventory turnover
-- Profit margins
-
----
-
-#### **US-CLIENT-005: Scalable Growth**
-**As a business owner**, I want a system that can scale with my business growth so that I can expand operations efficiently.
+### **Story 8.1: Access System on Mobile**
+**As a** sales manager  
+**I want to** access the system on my mobile device  
+**So that** I can manage inventory while away from the office  
 
 **Acceptance Criteria:**
-- [ ] System can handle 10x more vehicles
-- [ ] Additional social media platforms can be added
-- [ ] New features can be implemented easily
-- [ ] Performance remains consistent under load
-- [ ] Costs scale linearly with usage
+- ✅ I can access the system on my smartphone
+- ✅ I can view vehicle inventory
+- ✅ I can update vehicle status
+- ✅ I can add new vehicles
+- ✅ I can upload photos from my phone
+- ✅ The interface is optimized for mobile
 
-**Business Metrics:**
-- System performance under load
-- Feature development speed
-- Platform expansion capability
-- Cost per vehicle managed
-- Scalability metrics
+**Technical Requirements:**
+- Responsive web design
+- Mobile-optimized interface
+- Touch-friendly controls
+- Mobile photo upload
+- Offline functionality
+- Mobile performance optimization
 
----
-
-### **ROI & Performance Stories**
-
-#### **US-CLIENT-006: Measurable ROI**
-**As a business owner**, I want to see measurable return on investment so that I can justify the system cost and plan future investments.
-
-**Acceptance Criteria:**
-- [ ] System cost is recovered within 6 months
-- [ ] Monthly ROI is clearly documented
-- [ ] Performance improvements are quantified
-- [ ] Cost savings are tracked over time
-- [ ] Future investment recommendations are provided
-
-**Business Metrics:**
-- Total cost of ownership
-- Monthly cost savings
-- Revenue increase attributable to system
-- Payback period
-- Long-term ROI projection
-
----
-
-#### **US-CLIENT-007: Business Intelligence Dashboard**
-**As a business owner**, I want a comprehensive business intelligence dashboard so that I can monitor performance and make strategic decisions.
-
-**Acceptance Criteria:**
-- [ ] Key performance indicators are displayed
-- [ ] Trend analysis is provided
-- [ ] Comparative data is available
-- [ ] Reports can be customized
-- [ ] Data can be exported for external analysis
-
-**Business Metrics:**
-- Sales performance trends
-- Customer acquisition costs
-- Inventory turnover rates
-- Marketing effectiveness
-- Operational efficiency
-
----
-
-## 🔄 **CROSS-PERSPECTIVE REQUIREMENTS**
-
-### **Integration Requirements**
-
-#### **US-INTEGRATION-001: Google Services Integration**
-**All stakeholders** need seamless integration with Google services for photos and data management.
-
-**Acceptance Criteria:**
-- [ ] Google Drive integration for photo storage
-- [ ] Google Sheets integration for inventory management
-- [ ] Google Calendar integration for scheduling
-- [ ] Google Analytics integration for tracking
-- [ ] Single sign-on with Google accounts
-
----
-
-#### **US-INTEGRATION-002: Social Media Platform Integration**
-**All stakeholders** need reliable integration with multiple social media platforms.
-
-**Acceptance Criteria:**
-- [ ] Facebook integration for business pages and marketplace
-- [ ] Instagram integration for photo sharing
-- [ ] Twitter integration for announcements
-- [ ] LinkedIn integration for business networking
-- [ ] Platform-specific content optimization
-
----
-
-#### **US-INTEGRATION-003: Website Integration**
-**All stakeholders** need real-time synchronization with the dealership website.
-
-**Acceptance Criteria:**
-- [ ] Real-time inventory updates
-- [ ] Photo synchronization
-- [ ] Status change propagation
-- [ ] SEO optimization
-- [ ] Performance monitoring
-
----
-
-### **Security & Compliance Requirements**
-
-#### **US-SECURITY-001: Data Protection**
-**All stakeholders** need assurance that business and customer data is protected.
-
-**Acceptance Criteria:**
-- [ ] Data encryption at rest and in transit
-- [ ] User authentication and authorization
-- [ ] Audit logging for all changes
-- [ ] Regular security updates
-- [ ] Compliance with data protection regulations
-
----
-
-#### **US-SECURITY-002: Backup & Recovery**
-**All stakeholders** need reliable backup and recovery procedures.
-
-**Acceptance Criteria:**
-- [ ] Automated daily backups
-- [ ] Point-in-time recovery capability
-- [ ] Disaster recovery procedures
-- [ ] Data retention policies
-- [ ] Recovery time objectives met
-
----
-
-## 📊 **PRIORITIZATION MATRIX**
+## 🎯 **User Story Prioritization**
 
 ### **High Priority (Must Have)**
-- US-USER-001: Add New Vehicle
-- US-USER-004: View Current Inventory
-- US-CLIENT-001: Increase Sales Revenue
-- US-INTEGRATION-001: Google Services Integration
-- US-SECURITY-001: Data Protection
+1. **Add New Vehicle** (Story 1.1)
+2. **Edit Vehicle Information** (Story 1.2)
+3. **Upload Vehicle Photos** (Story 2.1)
+4. **Update Vehicle Status** (Story 3.1)
+5. **Sync Inventory to Google Sheets** (Story 4.1)
+6. **Post Vehicle to Facebook** (Story 5.1)
 
 ### **Medium Priority (Should Have)**
-- US-USER-002: Update Vehicle Information
-- US-USER-006: Monitor Social Media Posts
-- US-CLIENT-002: Reduce Operational Costs
-- US-INTEGRATION-002: Social Media Platform Integration
+1. **Search and Filter Vehicles** (Story 1.4)
+2. **Manage Vehicle Photos** (Story 2.2)
+3. **Automated Status Actions** (Story 3.2)
+4. **Import from Google Sheets** (Story 4.2)
+5. **Manage Facebook Posts** (Story 5.2)
+6. **Configure System Settings** (Story 6.1)
 
-### **Low Priority (Nice to Have)**
-- US-USER-007: Manage Post Content
-- US-CLIENT-005: Scalable Growth
-- US-INTEGRATION-003: Website Integration
+### **Low Priority (Could Have)**
+1. **Delete Vehicle** (Story 1.3)
+2. **Monitor System Health** (Story 6.2)
+3. **View Inventory Reports** (Story 7.1)
+4. **Track Sales Performance** (Story 7.2)
+5. **Access System on Mobile** (Story 8.1)
+
+## 📊 **User Story Statistics**
+
+### **Total User Stories: 20**
+- **Epic 1: Vehicle Management**: 4 stories
+- **Epic 2: Photo Management**: 2 stories
+- **Epic 3: Status Management**: 2 stories
+- **Epic 4: Google Sheets Integration**: 2 stories
+- **Epic 5: Facebook Integration**: 2 stories
+- **Epic 6: System Administration**: 2 stories
+- **Epic 7: Reporting and Analytics**: 2 stories
+- **Epic 8: Mobile Access**: 1 story
+
+### **Priority Distribution**
+- **High Priority**: 6 stories (30%)
+- **Medium Priority**: 6 stories (30%)
+- **Low Priority**: 8 stories (40%)
+
+### **Implementation Status**
+- **Completed**: 16 stories (80%)
+- **In Progress**: 2 stories (10%)
+- **Planned**: 2 stories (10%)
 
 ---
 
-## 🎯 **ACCEPTANCE CRITERIA SUMMARY**
-
-### **Functional Requirements:**
-- [ ] Vehicle management system (CRUD operations)
-- [ ] Photo management and organization
-- [ ] Social media automation
-- [ ] Website synchronization
-- [ ] Business intelligence reporting
-
-### **Non-Functional Requirements:**
-- [ ] Performance: Sub-2 second response times
-- [ ] Scalability: Handle 1000+ vehicles
-- [ ] Security: Enterprise-grade protection
-- [ ] Reliability: 99.9% uptime
-- [ ] Usability: Intuitive interface for non-technical users
-
----
-
-**These user stories provide a comprehensive foundation for developing the Autosell.mx system. Each story should be refined and estimated during sprint planning.** 🚀
+**These user stories provide a comprehensive foundation for the Autosell.mx system, ensuring all user needs are captured and addressed through the development process.** 🚀

@@ -76,12 +76,14 @@ app.add_middleware(
 # Include API routers
 try:
     from app.api import vehicles_router, health_router, photos_router
+    from app.api.frontend_integration import router as frontend_router
     from app.api.endpoints.facebook import router as facebook_router
     
     app.include_router(health_router)
     app.include_router(vehicles_router)
     app.include_router(photos_router, prefix="/photos", tags=["photos"])
     app.include_router(facebook_router, prefix="/facebook", tags=["facebook"])
+    app.include_router(frontend_router, prefix="/frontend", tags=["frontend-integration"])
     
     print("✅ API routers loaded successfully")
 except Exception as e:
