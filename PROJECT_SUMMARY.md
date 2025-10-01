@@ -11,8 +11,9 @@ Autosell.mx is a comprehensive vehicle management and automation system that pro
 - **Backend**: FastAPI + Python 3.13 + PostgreSQL + SQLAlchemy
 - **Automation**: n8n workflow automation platform
 - **Integration**: Google Sheets API + Facebook Graph API
-- **Hosting**: Vercel (frontend) + GitHub Codespaces (backend + n8n)
+- **Hosting**: Vercel (frontend) + GitHub Codespaces (backend + n8n) + Local Development
 - **Monitoring**: Comprehensive health checks and performance monitoring
+- **Deployment**: Complete local deployment with fix scripts and automation
 
 ### **Data Flow**
 ```

@@ -44,17 +44,14 @@ class VehicleBase(BaseModel):
             raise ValueError('Price cannot be negative')
         return v
     
-    @validator('marca', 'modelo')
+    @validator('marca', 'modelo', pre=True, always=True)
     def validate_strings(cls, v):
-        """Validate string fields"""
-        if v is None:
-            return v
+        """Validate string fields - handle empty strings and whitespace"""
+        if v is None or (isinstance(v, str) and not v.strip()):
+            return "Unknown"
         if isinstance(v, str):
-            stripped = v.strip()
-            if not stripped:
-                return "Unknown"  # Default value for empty strings
-            return stripped
-        return v
+            return v.strip()
+        return str(v) if v is not None else "Unknown"
 
 class VehicleCreate(VehicleBase):
     """Schema for creating a new vehicle"""
