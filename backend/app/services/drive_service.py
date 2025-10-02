@@ -64,7 +64,8 @@ class GoogleDriveService:
                     flow = InstalledAppFlow.from_client_secrets_file(credentials_file, SCOPES)
                     # Use a completely fixed redirect URI
                     flow.redirect_uri = 'http://localhost:8081/'
-                    creds = flow.run_local_server(port=8081, redirect_uri_trailing_slash=False)
+                    # Request offline access for refresh token
+                    creds = flow.run_local_server(port=8081, redirect_uri_trailing_slash=False, access_type='offline', prompt='consent')
                     logger.info("OAuth flow completed successfully")
                 
                 # Save credentials for next run
