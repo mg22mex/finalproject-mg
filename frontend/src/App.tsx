@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { Toaster } from 'react-hot-toast'
@@ -25,9 +24,9 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        <div className="min-h-screen bg-gray-50">
+        <div style={{minHeight: '100vh', backgroundColor: '#f9fafb'}}>
           <Navbar />
-          <main className="container mx-auto px-4 py-8">
+          <main className="container" style={{padding: '2rem 0'}}>
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/vehicles" element={<Vehicles />} />

@@ -48,13 +48,16 @@ const FacebookReposting: React.FC = () => {
         setStatus(data)
         
         // Update schedule if available
-        if (data.config) {
-          setSchedule(data.config)
+        if (data.schedule) {
+          setSchedule(data.schedule)
         }
+      } else {
+        console.error('Failed to fetch Facebook status:', response.statusText)
+        setStatus(null) // Indicate service unavailable
       }
     } catch (error) {
-      console.error('Error fetching status:', error)
-      toast.error('Error al cargar el estado del servicio')
+      console.error('Error fetching Facebook status:', error)
+      setStatus(null) // Indicate service unavailable
     }
   }
 
@@ -62,9 +65,17 @@ const FacebookReposting: React.FC = () => {
     setSchedule(prev => ({ ...prev, [field]: value }))
   }
 
+  const handleDayToggle = (day: number) => {
+    setSchedule(prev => {
+      const newDays = prev.days_of_week.includes(day)
+        ? prev.days_of_week.filter(d => d !== day)
+        : [...prev.days_of_week, day]
+      return { ...prev, days_of_week: newDays.sort((a, b) => a - b) }
+    })
+  }
+
   const saveSchedule = async () => {
     try {
-      setAutomating(true)
       const response = await fetch('http://localhost:8000/facebook/schedule', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -72,16 +83,14 @@ const FacebookReposting: React.FC = () => {
       })
       
       if (response.ok) {
-        toast.success('Programación guardada exitosamente')
+        toast.success('Configuración guardada')
         await fetchStatus()
       } else {
-        toast.error('Error al guardar la programación')
+        toast.error('Error al guardar la configuración')
       }
     } catch (error) {
       console.error('Error saving schedule:', error)
-      toast.error('Error al guardar la programación')
-    } finally {
-      setAutomating(false)
+      toast.error('Error al guardar la configuración')
     }
   }
 
@@ -150,7 +159,7 @@ const FacebookReposting: React.FC = () => {
         toast.error('Error al crear el post de prueba')
       }
     } catch (error) {
-      console.error('Error creating test post:', error)
+      console.error('Error testing post:', error)
       toast.error('Error al crear el post de prueba')
     } finally {
       setAutomating(false)
@@ -171,220 +180,209 @@ const FacebookReposting: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8 bg-gray-50 min-h-screen">
-      {/* Page Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-12 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center space-x-4 mb-4">
-            <Facebook className="h-10 w-10" />
-            <h1 className="text-4xl font-bold">Facebook Reposting</h1>
+    <div className="page-container">
+      <div className="space-y-6">
+        {/* Page Header */}
+        <div className="page-header">
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
+              <Facebook className="h-8 w-8 text-white" />
+            </div>
+            <h1 className="page-title">Facebook Reposting</h1>
+            <p className="page-subtitle">
+              Sistema automatizado de reposting diario para máxima visibilidad
+            </p>
           </div>
-          <p className="text-xl text-blue-100">
-            Sistema automatizado de reposting diario para máxima visibilidad
-          </p>
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-6 space-y-8">
         {/* Service Status */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-            <BarChart3 className="h-6 w-6 mr-3 text-blue-600" />
-            Estado del Servicio
-          </h3>
-          
-          {status ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600">{status.total_posts}</div>
-                <div className="text-sm text-gray-600">Total de Posts</div>
-              </div>
-              <div className="text-center p-4 bg-green-50 rounded-lg">
-                <div className="text-2xl font-bold text-green-600">{status.posts_last_week}</div>
-                <div className="text-sm text-gray-600">Posts Esta Semana</div>
-              </div>
-              <div className="text-center p-4 bg-purple-50 rounded-lg">
-                <div className="text-2xl font-bold text-purple-600">{status.active_vehicles}</div>
-                <div className="text-sm text-gray-600">Vehículos Activos</div>
-              </div>
-              <div className="text-center p-4 bg-orange-50 rounded-lg">
-                <div className="text-2xl font-bold text-orange-600">
-                  {status.is_active ? 'Activo' : 'Inactivo'}
+        <div className="card">
+          <div className="card-header">
+            <h3 className="card-title flex items-center">
+              <BarChart3 className="h-6 w-6 mr-3" style={{color: 'var(--color-primary)'}} />
+              Estado del Servicio
+            </h3>
+          </div>
+          <div className="card-content">
+            {status ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                  <div className="text-2xl font-bold text-blue-600">{status.total_posts}</div>
+                  <div className="text-sm text-gray-600">Total de Posts</div>
                 </div>
-                <div className="text-sm text-gray-600">Estado</div>
+                <div className="text-center p-4 bg-green-50 rounded-lg">
+                  <div className="text-2xl font-bold text-green-600">{status.posts_last_week}</div>
+                  <div className="text-sm text-gray-600">Posts Esta Semana</div>
+                </div>
+                <div className="text-center p-4 bg-purple-50 rounded-lg">
+                  <div className="text-2xl font-bold text-purple-600">{status.active_vehicles}</div>
+                  <div className="text-sm text-gray-600">Vehículos Activos</div>
+                </div>
+                <div className="text-center p-4 bg-orange-50 rounded-lg">
+                  <div className="text-2xl font-bold text-orange-600">
+                    {status.is_active ? 'Activo' : 'Inactivo'}
+                  </div>
+                  <div className="text-sm text-gray-600">Estado</div>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <div className="flex items-center space-x-2">
-                <AlertCircle className="h-5 w-5 text-yellow-600" />
-                <span className="font-semibold text-yellow-800">
-                  Servicio no disponible
-                </span>
+            ) : (
+              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div className="flex items-center space-x-2">
+                  <AlertCircle className="h-5 w-5 text-yellow-600" />
+                  <span className="font-semibold text-yellow-800">
+                    Servicio no disponible
+                  </span>
+                </div>
+                <p className="text-yellow-700 mt-2">
+                  No se pudo conectar con el servicio de Facebook.
+                </p>
               </div>
-              <p className="text-yellow-700 mt-2">
-                No se pudo conectar con el servicio de Facebook.
-              </p>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Automation Control */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-            <Zap className="h-6 w-6 mr-3 text-blue-600" />
-            Control de Automatización
-          </h3>
-          
-          <div className="flex flex-wrap gap-4 mb-6">
-            <button
-              onClick={startAutomation}
-              disabled={automating || status?.is_active}
-              className="px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center space-x-2"
-            >
-              <Play className="h-4 w-4" />
-              <span>Iniciar Automatización</span>
-            </button>
-            
-            <button
-              onClick={stopAutomation}
-              disabled={automating || !status?.is_active}
-              className="px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center space-x-2"
-            >
-              <StopCircle className="h-4 w-4" />
-              <span>Detener Automatización</span>
-            </button>
-            
-            <button
-              onClick={fetchStatus}
-              disabled={automating}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center space-x-2"
-            >
-              <RefreshCw className={`h-4 w-4 ${automating ? 'animate-spin' : ''}`} />
-              <span>Actualizar Estado</span>
-            </button>
+        <div className="card">
+          <div className="card-header">
+            <h3 className="card-title flex items-center">
+              <Zap className="h-6 w-6 mr-3" style={{color: 'var(--color-primary)'}} />
+              Control de Automatización
+            </h3>
           </div>
-
-          {status?.next_scheduled && (
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <div className="flex items-center space-x-2">
-                <Calendar className="h-5 w-5 text-blue-600" />
-                <span className="font-semibold text-blue-800">
-                  Próximo Post Programado: {new Date(status.next_scheduled).toLocaleString('es-MX')}
-                </span>
-              </div>
+          <div className="card-content">
+            <div className="flex flex-wrap gap-4 mb-6">
+              <button
+                onClick={startAutomation}
+                disabled={automating || status?.is_active}
+                className="btn-primary flex items-center space-x-2"
+              >
+                <Play className="h-4 w-4" />
+                <span>Iniciar Automatización</span>
+              </button>
+              
+              <button
+                onClick={stopAutomation}
+                disabled={automating || !status?.is_active}
+                className="btn-danger flex items-center space-x-2"
+              >
+                <StopCircle className="h-4 w-4" />
+                <span>Detener Automatización</span>
+              </button>
+              
+              <button
+                onClick={fetchStatus}
+                disabled={automating}
+                className="btn-secondary flex items-center space-x-2"
+              >
+                <RefreshCw className={`h-4 w-4 ${automating ? 'animate-spin' : ''}`} />
+                <span>Actualizar Estado</span>
+              </button>
             </div>
-          )}
+
+            {status?.next_scheduled && (
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center space-x-2">
+                  <Calendar className="h-5 w-5 text-blue-600" />
+                  <span className="font-semibold text-blue-800">
+                    Próximo Post Programado: {new Date(status.next_scheduled).toLocaleString('es-MX')}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Schedule Configuration */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-            <Settings className="h-6 w-6 mr-3 text-blue-600" />
-            Configuración de Programación
-          </h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Hora del Día
-              </label>
-              <input
-                type="time"
-                value={schedule.time_of_day}
-                onChange={(e) => handleScheduleChange('time_of_day', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-              />
+        <div className="card">
+          <div className="card-header">
+            <h3 className="card-title flex items-center">
+              <Settings className="h-6 w-6 mr-3" style={{color: 'var(--color-primary)'}} />
+              Configuración de Programación
+            </h3>
+          </div>
+          <div className="card-content">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Hora del Día
+                </label>
+                <input
+                  type="time"
+                  value={schedule.time_of_day}
+                  onChange={(e) => handleScheduleChange('time_of_day', e.target.value)}
+                  className="input-field"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Máximo Posts por Día
+                </label>
+                <input
+                  type="number"
+                  value={schedule.max_posts_per_day}
+                  onChange={(e) => handleScheduleChange('max_posts_per_day', Number(e.target.value))}
+                  className="input-field"
+                />
+              </div>
             </div>
             
-            <div>
+            <div className="mb-6">
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Máximo Posts por Día
+                Días de la Semana
               </label>
-              <input
-                type="number"
-                min="1"
-                max="20"
-                value={schedule.max_posts_per_day}
-                onChange={(e) => handleScheduleChange('max_posts_per_day', parseInt(e.target.value))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-              />
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                {['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'].map((dayName, index) => (
+                  <label key={index} className="flex items-center space-x-2 text-sm text-gray-700">
+                    <input
+                      type="checkbox"
+                      checked={schedule.days_of_week.includes(index)}
+                      onChange={() => handleDayToggle(index)}
+                      className="form-checkbox"
+                    />
+                    <span>{dayName}</span>
+                  </label>
+                ))}
+              </div>
             </div>
-          </div>
 
-          <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Días de la Semana
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {[0, 1, 2, 3, 4, 5, 6].map((day) => (
-                <label key={day} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={schedule.days_of_week.includes(day)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        handleScheduleChange('days_of_week', [...schedule.days_of_week, day])
-                      } else {
-                        handleScheduleChange('days_of_week', schedule.days_of_week.filter(d => d !== day))
-                      }
-                    }}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <span className="text-sm text-gray-700">{getDayName(day)}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <div className="mb-6">
-            <label className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 mb-6">
               <input
                 type="checkbox"
                 checked={schedule.include_marketplace}
                 onChange={(e) => handleScheduleChange('include_marketplace', e.target.checked)}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="form-checkbox"
               />
-              <span className="text-sm font-semibold text-gray-700">
+              <label className="text-sm font-semibold text-gray-700">
                 Incluir Facebook Marketplace
-              </span>
-            </label>
-          </div>
+              </label>
+            </div>
 
-          <button
-            onClick={saveSchedule}
-            disabled={automating}
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center space-x-2"
-          >
-            <Settings className="h-4 w-4" />
-            <span>Guardar Configuración</span>
-          </button>
+            <button onClick={saveSchedule} className="btn-primary">
+              Guardar Configuración
+            </button>
+          </div>
         </div>
 
         {/* Test Post */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-            <Facebook className="h-6 w-6 mr-3 text-blue-600" />
-            Post de Prueba
-          </h3>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Mensaje de Prueba
-              </label>
-              <textarea
-                value={testMessage}
-                onChange={(e) => setTestMessage(e.target.value)}
-                placeholder="Escribe tu mensaje de prueba aquí..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 h-24"
-              />
-            </div>
-            
+        <div className="card">
+          <div className="card-header">
+            <h3 className="card-title flex items-center">
+              <CheckCircle className="h-6 w-6 mr-3 text-green-600" />
+              Post de Prueba
+            </h3>
+          </div>
+          <div className="card-content">
+            <textarea
+              placeholder="Escribe tu mensaje de prueba aquí..."
+              value={testMessage}
+              onChange={(e) => setTestMessage(e.target.value)}
+              className="input-field mb-4"
+            ></textarea>
             <button
               onClick={testPost}
               disabled={automating || !testMessage.trim()}
-              className="px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center space-x-2"
+              className="btn-primary flex items-center space-x-2"
             >
               <CheckCircle className="h-4 w-4" />
               <span>Crear Post de Prueba</span>

@@ -62,7 +62,7 @@ app = FastAPI(
 # Add middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=os.getenv("CORS_ORIGINS", "http://localhost:3000").split(","),
+    allow_origins=os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:5173").split(","),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -78,12 +78,16 @@ try:
     from app.api import vehicles_router, health_router, photos_router
     from app.api.frontend_integration import router as frontend_router
     from app.api.endpoints.facebook import router as facebook_router
+    from app.api.drive import router as drive_router
+    from app.api.dashboard import router as dashboard_router
     
     app.include_router(health_router)
     app.include_router(vehicles_router)
     app.include_router(photos_router, prefix="/photos", tags=["photos"])
     app.include_router(facebook_router, prefix="/facebook", tags=["facebook"])
     app.include_router(frontend_router, prefix="/frontend", tags=["frontend-integration"])
+    app.include_router(drive_router, prefix="/drive", tags=["drive"])
+    app.include_router(dashboard_router, prefix="/dashboard", tags=["dashboard"])
     
     print("✅ API routers loaded successfully")
 except Exception as e:

@@ -1,1 +1,57 @@
-.vercel
+# Environment variables
+.env
+.env.local
+.env.production
+.env.development
+
+# OAuth credentials and tokens
+backend/drive_credentials.json
+backend/drive_credentials_n8n.json
+backend/drive_token.json
+backend/credentials.json
+backend/token.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Frontend build
+frontend/dist/
+frontend/build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary files
+*.tmp
+*.temp

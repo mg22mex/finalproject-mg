@@ -51,36 +51,83 @@ const Vehicles: React.FC = () => {
   }
 
   if (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
+    const isNetworkError = errorMessage.includes('Network Error') || errorMessage.includes('fetch')
+    const isServerError = errorMessage.includes('500') || errorMessage.includes('Internal Server Error')
+    
     return (
-      <div className="text-center py-12">
-        <div className="text-red-600 text-lg mb-4">Error al cargar vehículos</div>
-        <button 
-          onClick={() => window.location.reload()} 
-          className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200"
-        >
-          Intentar de Nuevo
-        </button>
+      <div className="page-container">
+        <div className="page-header">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="page-title">Vehículos</h1>
+              <p className="page-subtitle">
+                Gestiona tu inventario de vehículos y listados
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="card">
+          <div className="text-center py-12">
+            <div className="mx-auto h-12 w-12 text-red-600 mb-4">
+              <Car className="h-12 w-12" />
+            </div>
+            <h3 className="text-lg font-semibold text-red-600 mb-2">Error al cargar vehículos</h3>
+            <p className="text-gray-600 mb-4">
+              {isNetworkError 
+                ? 'No se pudo conectar con el servidor. Verifica tu conexión a internet.'
+                : isServerError
+                ? 'El servidor está experimentando problemas. Intenta nuevamente en unos momentos.'
+                : 'Ocurrió un error inesperado al cargar los vehículos.'
+              }
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button 
+                onClick={() => window.location.reload()} 
+                className="btn-danger"
+              >
+                Recargar Página
+              </button>
+              <button 
+                onClick={() => {
+                  // Reset filters and try again
+                  setFilters({
+                    marca: '',
+                    modelo: '',
+                    año: '',
+                    estatus: '',
+                    precio_min: '',
+                    precio_max: '',
+                    search: '',
+                  })
+                  setPagination({ page: 1, limit: 12 })
+                }}
+                className="btn-secondary"
+              >
+                Limpiar Filtros
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="page-header">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="page-title">Vehículos</h1>
-            <p className="page-subtitle">
-              Gestiona tu inventario de vehículos y listados
-            </p>
+    <div className="page-container">
+      <div className="space-y-6">
+        {/* Page Header */}
+        <div className="page-header">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="page-title">Vehículos</h1>
+              <p className="page-subtitle">
+                Gestiona tu inventario de vehículos y listados
+              </p>
+            </div>
           </div>
-          <Link to="/vehicles/new" className="btn-primary flex items-center space-x-2">
-            <Plus className="h-4 w-4" />
-            <span>Agregar Vehículo</span>
-          </Link>
         </div>
-      </div>
 
       {/* Search and Filters */}
       <div className="card">
@@ -234,6 +281,7 @@ const Vehicles: React.FC = () => {
           </button>
         </div>
       )}
+      </div>
     </div>
   )
 }

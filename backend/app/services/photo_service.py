@@ -54,8 +54,10 @@ class PhotoService:
                     self.credentials.refresh(Request())
                 else:
                     flow = InstalledAppFlow.from_client_secrets_file(
-                        'credentials.json', SCOPES)
-                    self.credentials = flow.run_local_server(port=0)
+                        'drive_credentials_n8n.json', SCOPES)
+                    # Use fixed redirect URI
+                    flow.redirect_uri = 'http://localhost:8081/'
+                    self.credentials = flow.run_local_server(port=8081, redirect_uri_trailing_slash=False)
                 
                 # Save the credentials for the next run
                 with open('token.json', 'w') as token:

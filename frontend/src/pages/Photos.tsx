@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Upload, Camera, FolderOpen, Trash2, Star, Eye, RefreshCw } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import LoadingSpinner from '../components/LoadingSpinner'
-import { vehicleAPI } from '../services/api'
+import { vehicleAPI, photoAPI } from '../services/api'
 
 interface Photo {
   id: number
@@ -60,100 +60,29 @@ const Photos: React.FC = () => {
     fetchVehicles()
   }, [])
 
-  // Mock photos data with sample image URLs for testing
-  const [photos, setPhotos] = useState<Photo[]>([
-    {
-      id: 1,
-      vehicle_id: 2, // Toyota Camry
-      filename: 'front_view.jpg',
-      original_filename: 'front_view.jpg',
-      drive_url: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=300&fit=crop',
-      drive_file_id: '1',
-      file_size: 2048576,
-      mime_type: 'image/jpeg',
-      width: 1920,
-      height: 1080,
-      is_primary: true,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
-    },
-    {
-      id: 2,
-      vehicle_id: 2, // Toyota Camry
-      filename: 'side_view.jpg',
-      original_filename: 'side_view.jpg',
-      drive_url: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=400&h=300&fit=crop',
-      drive_file_id: '2',
-      file_size: 1536000,
-      mime_type: 'image/jpeg',
-      width: 1920,
-      height: 1080,
-      is_primary: false,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
-    },
-    {
-      id: 3,
-      vehicle_id: 4, // Nissan Sentra
-      filename: 'exterior_view.jpg',
-      original_filename: 'exterior_view.jpg',
-      drive_url: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&h=300&fit=crop',
-      drive_file_id: '3',
-      file_size: 1843200,
-      mime_type: 'image/jpeg',
-      width: 1920,
-      height: 1080,
-      is_primary: true,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
-    },
-    {
-      id: 4,
-      vehicle_id: 2, // Toyota Camry - additional photo
-      filename: 'rear_view.jpg',
-      original_filename: 'rear_view.jpg',
-      drive_url: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&h=300&fit=crop',
-      drive_file_id: '4',
-      file_size: 1966080,
-      mime_type: 'image/jpeg',
-      width: 1920,
-      height: 1080,
-      is_primary: false,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
-    },
-    {
-      id: 5,
-      vehicle_id: 3, // Honda Civic
-      filename: 'exterior_front.jpg',
-      original_filename: 'exterior_front.jpg',
-      drive_url: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&h=300&fit=crop&crop=top',
-      drive_file_id: '5',
-      file_size: 2097152,
-      mime_type: 'image/jpeg',
-      width: 1920,
-      height: 1080,
-      is_primary: true,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
-    },
-    {
-      id: 6,
-      vehicle_id: 3, // Honda Civic - additional photo
-      filename: 'side_view.jpg',
-      original_filename: 'side_view.jpg',
-      drive_url: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=400&h=300&fit=crop',
-      drive_file_id: '6',
-      file_size: 1572864,
-      mime_type: 'image/jpeg',
-      width: 1920,
-      height: 1080,
-      is_primary: false,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
-    }
-  ])
+  // Real photos data from API
+  const [photos, setPhotos] = useState<Photo[]>([])
+  const [photosLoading, setPhotosLoading] = useState(false)
   const [filteredPhotos, setFilteredPhotos] = useState<Photo[]>([])
+
+  // Fetch photos from API
+  const fetchPhotos = async (vehicleId?: number) => {
+    try {
+      setPhotosLoading(true)
+      const response = await photoAPI.getPhotos(vehicleId ? { vehicle_id: vehicleId } : {})
+      setPhotos(response)
+    } catch (error) {
+      console.error('Error fetching photos:', error)
+      toast.error('Error al cargar fotos')
+    } finally {
+      setPhotosLoading(false)
+    }
+  }
+
+  // Fetch photos when component mounts or vehicle changes
+  useEffect(() => {
+    fetchPhotos(selectedVehicle || undefined)
+  }, [selectedVehicle])
 
   // Filter photos by selected vehicle
   useEffect(() => {
@@ -170,24 +99,18 @@ const Photos: React.FC = () => {
     if (!files || files.length === 0 || !selectedVehicle) return
 
     setUploading(true)
-    const formData = new FormData()
 
     try {
+      // Upload each file individually
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
-        formData.append('files', file)
+        await photoAPI.uploadPhoto(selectedVehicle, file)
       }
-
-      // TODO: Implement actual file upload API call
-      // const response = await uploadPhotos(selectedVehicle, formData)
-      
-      // Simulate upload delay
-      await new Promise(resolve => setTimeout(resolve, 2000))
       
       toast.success(`${files.length} photo(s) uploaded successfully!`)
       
       // Refresh photos list
-      // queryClient.invalidateQueries(['photos', selectedVehicle])
+      await fetchPhotos(selectedVehicle)
       
     } catch (error) {
       toast.error('Failed to upload photos')
@@ -283,60 +206,66 @@ const Photos: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8 bg-gray-50 min-h-screen">
-      {/* Page Header - Matching Autosell.mx style */}
-              <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white py-12 px-6">
-          <div className="max-w-7xl mx-auto">
-            <h1 className="text-4xl font-bold mb-4">Gestión de Fotos</h1>
-            <p className="text-xl text-blue-100">
+    <div className="page-container">
+      <div className="space-y-6">
+        {/* Page Header */}
+        <div className="page-header">
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
+              <Camera className="h-8 w-8 text-white" />
+            </div>
+            <h1 className="page-title">Gestión de Fotos</h1>
+            <p className="page-subtitle">
               Gestiona las fotos de vehículos e integración con Google Drive
             </p>
           </div>
         </div>
 
-      <div className="max-w-7xl mx-auto px-6 space-y-8">
-
-      {/* Vehicle Selection - Matching Autosell.mx style */}
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8">
-        <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-          <span className="w-2 h-8 bg-blue-600 rounded-full mr-4"></span>
-          Seleccionar Vehículo
-        </h3>
-        <div className="flex flex-col lg:flex-row gap-6">
-          <div className="flex-1">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Elegir Vehículo</label>
-            <select
-              value={selectedVehicle || ''}
-              onChange={(e) => setSelectedVehicle(Number(e.target.value) || null)}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 transition-all duration-200 text-gray-900 bg-white"
-            >
-              <option value="">Elige un vehículo...</option>
-              {vehicles.map((vehicle) => (
-                <option key={vehicle.id} value={vehicle.id}>
-                  {vehicle.año} {vehicle.marca} {vehicle.modelo} - {vehicle.estatus} - ${vehicle.precio?.toLocaleString()} - {vehicle.kilometraje}
-                </option>
-              ))}
-            </select>
+        {/* Vehicle Selection */}
+        <div className="card">
+          <div className="card-header">
+            <h3 className="card-title flex items-center">
+              <span className="w-2 h-8 bg-blue-600 rounded-full mr-4"></span>
+              Seleccionar Vehículo
+            </h3>
           </div>
-          
-          <button
-            onClick={handleGoogleDriveSync}
-            disabled={syncStatus === 'syncing'}
-            className="px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-3"
-          >
-            {syncStatus === 'syncing' ? (
-              <RefreshCw className="h-5 w-5 animate-spin" />
-            ) : (
-              <FolderOpen className="h-5 w-5" />
-            )}
-            <span>
-              {syncStatus === 'syncing' ? 'Syncing...' : 
-               syncStatus === 'success' ? 'Synced!' : 
-               syncStatus === 'error' ? 'Sync Failed' : 'Sync Google Drive'}
-            </span>
-          </button>
+          <div className="card-content">
+            <div className="flex flex-col lg:flex-row gap-6">
+              <div className="flex-1">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Elegir Vehículo</label>
+                <select
+                  value={selectedVehicle || ''}
+                  onChange={(e) => setSelectedVehicle(Number(e.target.value) || null)}
+                  className="input-field"
+                >
+                  <option value="">Elige un vehículo...</option>
+                  {vehicles.map((vehicle) => (
+                    <option key={vehicle.id} value={vehicle.id}>
+                      {vehicle.año} {vehicle.marca} {vehicle.modelo} - {vehicle.estatus} - ${vehicle.precio?.toLocaleString()} - {vehicle.kilometraje}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <button
+                onClick={handleGoogleDriveSync}
+                disabled={syncStatus === 'syncing'}
+                className="btn-primary flex items-center space-x-3"
+              >
+                {syncStatus === 'syncing' ? (
+                  <RefreshCw className="h-5 w-5 animate-spin" />
+                ) : (
+                  <FolderOpen className="h-5 w-5" />
+                )}
+                <span>
+                  {syncStatus === 'syncing' ? 'Syncing...' : 
+                   syncStatus === 'success' ? 'Synced!' : 
+                   syncStatus === 'error' ? 'Sync Failed' : 'Sync Google Drive'}
+                </span>
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
 
       {/* Upload Section - Matching Autosell.mx style */}
       {selectedVehicle && (
@@ -531,7 +460,7 @@ const Photos: React.FC = () => {
             <span>Inventario de Vehículos</span>
           </div>
         </div>
-      </div>
+        </div>
       </div>
     </div>
   )

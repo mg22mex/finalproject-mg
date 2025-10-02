@@ -26,30 +26,31 @@ const Dashboard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-64">
+      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '16rem'}}>
         <LoadingSpinner />
       </div>
     )
   }
 
   return (
-    <div className="space-y-8">
+    <div className="dashboard">
       {/* Page Header */}
-      <div className="page-header">
-        <h1 className="page-title">Dashboard</h1>
-        <p className="page-subtitle">
+      <div>
+        <h1 className="dashboard-title">Dashboard</h1>
+        <p className="welcome-message">
           Bienvenido a Autosell.mx - Tu Sistema de Gestión de Vehículos
         </p>
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="stats-grid">
         <StatsCard
           title="Total de Vehículos"
           value={stats?.total_vehicles || 0}
           icon={Car}
           color="blue"
           change={stats?.vehicles_change || 0}
+          subtitle={`${stats?.available_vehicles || 0} disponibles`}
         />
         <StatsCard
           title="Vehículos Disponibles"
@@ -57,6 +58,7 @@ const Dashboard: React.FC = () => {
           icon={Car}
           color="green"
           change={stats?.available_change || 0}
+          subtitle={`${stats?.sold_vehicles || 0} vendidos`}
         />
         <StatsCard
           title="Valor Total"
@@ -64,6 +66,7 @@ const Dashboard: React.FC = () => {
           icon={DollarSign}
           color="purple"
           change={stats?.value_change || 0}
+          subtitle={`Promedio: $${(stats?.average_price || 0).toLocaleString()}`}
         />
         <StatsCard
           title="Fotos Subidas"
@@ -71,32 +74,33 @@ const Dashboard: React.FC = () => {
           icon={Camera}
           color="orange"
           change={stats?.photos_change || 0}
+          subtitle={`${stats?.vehicles_with_photos || 0} vehículos con fotos`}
         />
       </div>
 
       {/* Recent Vehicles Section */}
       <div className="card">
-        <div className="section-header">
-          <h2 className="section-title">Vehículos Recientes</h2>
-          <Link to="/vehicles" className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200">
+        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem'}}>
+          <h2 className="card-title">Vehículos Recientes</h2>
+          <Link to="/vehicles" className="btn btn-primary">
             Ver Todos los Vehículos
           </Link>
         </div>
 
         {vehicles && vehicles.vehicles.length > 0 ? (
-          <div className="vehicle-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem'}}>
             {vehicles.vehicles.map((vehicle) => (
               <VehicleCard key={vehicle.id} vehicle={vehicle} />
             ))}
           </div>
         ) : (
-          <div className="empty-state">
-            <Car className="empty-state-icon" />
-            <h3 className="empty-state-title">No hay vehículos aún</h3>
-            <p className="empty-state-description">
+          <div style={{textAlign: 'center', padding: '2rem'}}>
+            <Car style={{width: '4rem', height: '4rem', margin: '0 auto 1rem', color: '#6b7280'}} />
+            <h3 style={{fontSize: '1.25rem', fontWeight: '600', color: '#1f2937', marginBottom: '0.5rem'}}>No hay vehículos aún</h3>
+            <p style={{color: '#6b7280', marginBottom: '1.5rem'}}>
               Comienza agregando tu primer vehículo al sistema.
             </p>
-            <Link to="/vehicles/new" className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200">
+            <Link to="/vehicles/new" className="btn btn-primary">
               Agregar Primer Vehículo
             </Link>
           </div>
@@ -104,54 +108,41 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem'}}>
         <div className="card">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
-          <div className="space-y-3">
-            <Link
-              to="/vehicles/new"
-              className="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:border-red-300 hover:bg-red-50 transition-colors duration-200"
-            >
-              <Plus className="h-5 w-5 text-red-600" />
-              <span className="text-gray-700">Agregar Nuevo Vehículo</span>
-            </Link>
+          <h3 className="card-title">Acciones Rápidas</h3>
+          <div style={{display: 'flex', flexDirection: 'column', gap: '0.75rem'}}>
             <Link
               to="/photos"
-              className="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:border-red-300 hover:bg-red-50 transition-colors duration-200"
+              style={{display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid #e5e7eb', textDecoration: 'none', color: '#374151', transition: 'all 0.2s'}}
             >
-              <Camera className="h-5 w-5 text-red-600" />
-              <span className="text-gray-700">Gestionar Fotos</span>
+              <Camera style={{width: '1.25rem', height: '1.25rem', color: '#dc2626'}} />
+              <span>Gestionar Fotos</span>
             </Link>
             <Link
               to="/settings"
-              className="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:border-red-300 hover:bg-red-50 transition-colors duration-200"
+              style={{display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid #e5e7eb', textDecoration: 'none', color: '#374151', transition: 'all 0.2s'}}
             >
-              <Settings className="h-5 w-5 text-red-600" />
-              <span className="text-gray-700">Configuración del Sistema</span>
+              <Settings style={{width: '1.25rem', height: '1.25rem', color: '#dc2626'}} />
+              <span>Configuración del Sistema</span>
             </Link>
           </div>
         </div>
 
         <div className="card">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">System Status</h3>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">API Status</span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                Healthy
-              </span>
+          <h3 className="card-title">System Status</h3>
+          <div className="system-status">
+            <div className="status-item">
+              <span style={{color: '#6b7280'}}>API Status</span>
+              <span className="status">Healthy</span>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Database</span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                Connected
-              </span>
+            <div className="status-item">
+              <span style={{color: '#6b7280'}}>Database</span>
+              <span className="status">Connected</span>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Photo Storage</span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                Ready
-              </span>
+            <div className="status-item">
+              <span style={{color: '#6b7280'}}>Photo Storage</span>
+              <span className="status">Ready</span>
             </div>
           </div>
         </div>

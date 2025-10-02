@@ -85,4 +85,6 @@ export interface DashboardStats {
   value_change: number
   total_photos: number
   photos_change: number
+  vehicles_with_photos?: number
+  primary_photos?: number
 }

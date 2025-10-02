@@ -46,6 +46,10 @@ class Vehicle(Base):
     descripcion = Column(Text)
     caracteristicas = Column(JSON)  # Additional features as JSON
     
+    # Google Drive integration
+    drive_folder_id = Column(String(200), index=True)
+    drive_folder_url = Column(String(500))
+    
     # Metadata
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
