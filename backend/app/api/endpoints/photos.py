@@ -103,7 +103,7 @@ async def upload_photo(
     description: Optional[str] = Form(None),
     db: Session = Depends(get_db)
 ):
-    """Upload a photo for a specific vehicle"""
+    """Upload a photo for a specific vehicle with Google Drive integration"""
     try:
         # Verify vehicle exists
         vehicle = db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()
@@ -120,13 +120,51 @@ async def upload_photo(
             temp_file_path = temp_file.name
         
         try:
-            # Create a simple photo record in the database without Google Drive
-            # TODO: Add Google Drive integration later when OAuth is fixed
+            # Import Drive service
+            from ...services.drive_service import drive_service
+            
+            # Ensure vehicle has a Drive folder
+            if not vehicle.drive_folder_id:
+                # Create Drive folder for vehicle
+                folder_info = drive_service.create_vehicle_folder(
+                    vehicle_id, 
+                    {
+                        'marca': vehicle.marca,
+                        'modelo': vehicle.modelo,
+                        'año': vehicle.año
+                    }
+                )
+                
+                if folder_info:
+                    vehicle.drive_folder_id = folder_info['folder_id']
+                    vehicle.drive_folder_url = folder_info['folder_url']
+                    db.commit()
+                else:
+                    raise HTTPException(status_code=500, detail="Failed to create Drive folder")
+            
+            # Upload photo to Google Drive
+            with open(temp_file_path, 'rb') as f:
+                file_content = f.read()
+            
+            drive_result = drive_service.upload_photo_to_vehicle_folder(
+                vehicle_id=vehicle_id,
+                folder_id=vehicle.drive_folder_id,
+                file_content=file_content,
+                filename=file.filename,
+                mime_type=file.content_type
+            )
+            
+            if not drive_result:
+                raise HTTPException(status_code=500, detail="Failed to upload photo to Google Drive")
+            
+            # Create photo record in database (metadata only)
             photo = Photo(
                 vehicle_id=vehicle_id,
-                filename=file.filename,
+                filename=drive_result['filename'],
                 original_filename=file.filename,
-                file_size=os.path.getsize(temp_file_path),
+                drive_file_id=drive_result['drive_file_id'],
+                drive_url=drive_result['drive_url'],
+                file_size=drive_result['file_size'],
                 mime_type=file.content_type,
                 is_primary=False,
                 order_index=0
@@ -136,7 +174,7 @@ async def upload_photo(
             db.commit()
             db.refresh(photo)
             
-            logger.info(f"Photo uploaded successfully: {photo.id}")
+            logger.info(f"Photo uploaded successfully to Drive: {photo.id}")
             return photo
             
         finally:
@@ -315,9 +353,7 @@ async def search_photos(
 ):
     """Search photos by description or filename"""
     try:
-        search_query = db.query(Photo).filter(
-            Photo.is_active == True
-        )
+        search_query = db.query(Photo)
         
         if vehicle_id:
             search_query = search_query.filter(Photo.vehicle_id == vehicle_id)
@@ -336,3 +372,139 @@ async def search_photos(
     except Exception as e:
         logger.error(f"Failed to search photos: {e}")
         raise HTTPException(status_code=500, detail="Failed to search photos")
+
+@router.post("/vehicle/{vehicle_id}/sync-drive")
+async def sync_vehicle_drive_photos(
+    vehicle_id: int,
+    db: Session = Depends(get_db)
+):
+    """Sync photos from Google Drive folder to database"""
+    try:
+        # Verify vehicle exists
+        vehicle = db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()
+        if not vehicle:
+            raise HTTPException(status_code=404, detail="Vehicle not found")
+        
+        if not vehicle.drive_folder_id:
+            raise HTTPException(status_code=400, detail="Vehicle has no Drive folder")
+        
+        # Import Drive service
+        from ...services.drive_service import drive_service
+        
+        # Sync photos from Drive
+        drive_photos = drive_service.sync_vehicle_photos(vehicle_id, vehicle.drive_folder_id)
+        
+        synced_count = 0
+        new_count = 0
+        
+        for drive_photo in drive_photos:
+            # Check if photo already exists
+            existing_photo = db.query(Photo).filter(
+                Photo.drive_file_id == drive_photo['drive_file_id']
+            ).first()
+            
+            if not existing_photo:
+                # Create new photo record
+                photo = Photo(
+                    vehicle_id=vehicle_id,
+                    filename=drive_photo['filename'],
+                    drive_file_id=drive_photo['drive_file_id'],
+                    drive_url=drive_photo['drive_url'],
+                    file_size=drive_photo['file_size'],
+                    mime_type=drive_photo['mime_type'],
+                    is_primary=False,
+                    order_index=0
+                )
+                
+                db.add(photo)
+                new_count += 1
+            
+            synced_count += 1
+        
+        db.commit()
+        
+        return {
+            "message": "Drive photos synced successfully",
+            "total_files": len(drive_photos),
+            "synced_count": synced_count,
+            "new_count": new_count
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to sync Drive photos: {e}")
+        raise HTTPException(status_code=500, detail="Failed to sync Drive photos")
+
+@router.get("/vehicle/{vehicle_id}/drive-folder")
+async def get_vehicle_drive_folder(
+    vehicle_id: int,
+    db: Session = Depends(get_db)
+):
+    """Get vehicle's Google Drive folder information"""
+    try:
+        # Verify vehicle exists
+        vehicle = db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()
+        if not vehicle:
+            raise HTTPException(status_code=404, detail="Vehicle not found")
+        
+        if not vehicle.drive_folder_id:
+            return {
+                "has_folder": False,
+                "message": "Vehicle has no Drive folder"
+            }
+        
+        # Import Drive service
+        from ...services.drive_service import drive_service
+        
+        # Get folder files
+        files = drive_service.list_folder_files(vehicle.drive_folder_id)
+        
+        return {
+            "has_folder": True,
+            "folder_id": vehicle.drive_folder_id,
+            "folder_url": vehicle.drive_folder_url,
+            "files": files,
+            "file_count": len(files)
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get Drive folder info: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get Drive folder info")
+
+@router.get("/{photo_id}/thumbnail")
+async def get_photo_thumbnail(
+    photo_id: int,
+    size: str = Query("medium", description="Thumbnail size: small, medium, large"),
+    db: Session = Depends(get_db)
+):
+    """Get photo thumbnail URL from Google Drive"""
+    try:
+        photo = db.query(Photo).filter(Photo.id == photo_id).first()
+        if not photo:
+            raise HTTPException(status_code=404, detail="Photo not found")
+        
+        if not photo.drive_file_id:
+            raise HTTPException(status_code=400, detail="Photo has no Drive file ID")
+        
+        # Import Drive service
+        from ...services.drive_service import drive_service
+        
+        thumbnail_url = drive_service.get_photo_thumbnail_url(photo.drive_file_id, size)
+        
+        if not thumbnail_url:
+            raise HTTPException(status_code=500, detail="Failed to generate thumbnail URL")
+        
+        return {
+            "thumbnail_url": thumbnail_url,
+            "direct_url": drive_service.get_photo_direct_url(photo.drive_file_id),
+            "drive_url": photo.drive_url
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get photo thumbnail: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get photo thumbnail")

@@ -7,19 +7,33 @@ Autosell.mx is a comprehensive vehicle management and automation system that pro
 ## 🏗️ **System Architecture**
 
 ### **Core Components**
-- **Frontend**: React 18 + TypeScript + Vite + Tailwind CSS
-- **Backend**: FastAPI + Python 3.13 + PostgreSQL + SQLAlchemy
-- **Automation**: n8n workflow automation platform
-- **Integration**: Google Sheets API + Facebook Graph API
-- **Hosting**: Vercel (frontend) + GitHub Codespaces (backend + n8n) + Local Development
+- **Frontend**: React 18 + TypeScript + Vite + Tailwind CSS + Professional Vehicle Details
+- **Backend**: FastAPI + Python 3.13 + PostgreSQL + SQLAlchemy + Google Drive Integration
+- **Automation**: n8n workflow automation platform + Google Drive folder creation
+- **Integration**: Google Sheets API + Facebook Graph API + Google Drive API
+- **Hosting**: GitHub Codespaces (all components) + Local Development
+- **Storage**: Database (metadata only, ~300MB) + Google Drive (unlimited photos)
 - **Monitoring**: Comprehensive health checks and performance monitoring
-- **Deployment**: Complete local deployment with fix scripts and automation
+- **Deployment**: Optimized for GitHub Codespaces with minimal storage usage
 
-### **Data Flow**
+### **Optimized Data Flow**
 ```
-Frontend → Backend → Database → n8n → Google Sheets + Facebook
-Google Sheets → n8n → Backend → Database → Autosell.mx + Facebook
+Frontend → Backend → Database (metadata) → Google Drive (photos) → n8n → Google Sheets + Facebook
+Google Sheets → n8n → Backend → Database → Google Drive folders → Autosell.mx + Facebook
 ```
+
+### **Storage Architecture**
+- **Database (GitHub Codespaces)**: ~300MB total
+  - Vehicle metadata (marca, modelo, precio, estatus)
+  - Drive folder references (folder_id, folder_url)
+  - Photo metadata (drive_file_id, filename, file_size)
+  - No actual photo files stored
+
+- **Google Drive (External)**: Unlimited storage
+  - All actual photos stored in organized vehicle folders
+  - Professional sharing URLs for frontend display
+  - Automatic folder creation via n8n workflows
+  - Built-in Google Drive backup and versioning
 
 ## 🚀 **Key Features**
 

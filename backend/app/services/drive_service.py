@@ -235,31 +235,101 @@ class GoogleDriveService:
             return None
     
     def sync_vehicle_photos(self, vehicle_id: int, folder_id: str) -> List[Dict[str, Any]]:
-        """Sync photos from Drive folder to the system"""
+        """Sync photos from Drive folder to the system (metadata only)"""
         try:
             # Get all files in the folder
             files = self.list_folder_files(folder_id)
             
             synced_photos = []
             for file in files:
-                # Download file content
-                file_content = self.download_file(file['id'])
-                if file_content:
-                    synced_photos.append({
-                        'vehicle_id': vehicle_id,
-                        'drive_file_id': file['id'],
-                        'file_name': file['name'],
-                        'mime_type': file['mime_type'],
-                        'file_size': file['size'],
-                        'file_content': file_content,
-                        'drive_url': file['url']
-                    })
+                # Store only metadata, not file content
+                synced_photos.append({
+                    'vehicle_id': vehicle_id,
+                    'drive_file_id': file['id'],
+                    'filename': file['name'],
+                    'mime_type': file['mime_type'],
+                    'file_size': int(file['size']) if file['size'] else 0,
+                    'drive_url': file['url'],
+                    'created_time': file['created_time']
+                })
             
             return synced_photos
             
         except Exception as e:
             logger.error(f"Error syncing vehicle photos: {e}")
             return []
+    
+    def upload_photo_to_vehicle_folder(self, vehicle_id: int, folder_id: str, file_content: bytes, filename: str, mime_type: str) -> Optional[Dict[str, Any]]:
+        """Upload a photo to a vehicle's Drive folder"""
+        try:
+            if not self.service:
+                if not self.authenticate():
+                    return None
+            
+            # Create file metadata
+            file_metadata = {
+                'name': filename,
+                'parents': [folder_id]
+            }
+            
+            # Upload file
+            from googleapiclient.http import MediaIoBaseUpload
+            import io
+            
+            media = MediaIoBaseUpload(
+                io.BytesIO(file_content),
+                mimetype=mime_type,
+                resumable=True
+            )
+            
+            file = self.service.files().create(
+                body=file_metadata,
+                media_body=media,
+                fields='id,name,webViewLink,size'
+            ).execute()
+            
+            logger.info(f"Photo uploaded to Drive: {file['id']}")
+            
+            return {
+                'drive_file_id': file['id'],
+                'filename': file['name'],
+                'drive_url': file['webViewLink'],
+                'file_size': int(file.get('size', 0))
+            }
+            
+        except Exception as e:
+            logger.error(f"Error uploading photo to Drive: {e}")
+            return None
+    
+    def get_photo_thumbnail_url(self, file_id: str, size: str = "medium") -> Optional[str]:
+        """Get thumbnail URL for a Drive photo"""
+        try:
+            if not self.service:
+                if not self.authenticate():
+                    return None
+            
+            # Generate thumbnail URL
+            thumbnail_url = f"https://drive.google.com/thumbnail?id={file_id}&sz={size}"
+            return thumbnail_url
+            
+        except Exception as e:
+            logger.error(f"Error getting photo thumbnail: {e}")
+            return None
+    
+    def get_photo_direct_url(self, file_id: str) -> Optional[str]:
+        """Get direct download URL for a Drive photo"""
+        try:
+            if not self.service:
+                if not self.authenticate():
+                    return None
+            
+            # Generate direct download URL
+            direct_url = f"https://drive.google.com/uc?export=download&id={file_id}"
+            return direct_url
+            
+        except Exception as e:
+            logger.error(f"Error getting photo direct URL: {e}")
+            return None
 
 # Global instance
 drive_service = GoogleDriveService()

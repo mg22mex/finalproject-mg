@@ -8,30 +8,45 @@ Autosell.mx is a comprehensive vehicle management system that automates inventor
 ## ✅ **COMPLETED FEATURES:**
 - ✅ **Facebook Integration** - Multi-account posting system with published Facebook app
 - ✅ **Vehicle Management** - Complete CRUD operations with PostgreSQL database
-- ✅ **Photo Management** - Google Drive integration with automated organization
+- ✅ **Optimized Photo Management** - Google Drive integration with metadata-only database storage
 - ✅ **Multi-Account System** - Support for 3 Facebook accounts (Manual + 2 Auto)
 - ✅ **Automation Framework** - Scheduled posting and manual triggers
 - ✅ **Privacy Compliance** - Complete privacy policy and Facebook app approval
-- ✅ **Frontend Interface** - React dashboard with autosell.mx branding
+- ✅ **Frontend Interface** - React dashboard with autosell.mx branding and professional vehicle details
 - ✅ **Google Sheets Sync** - Inventory synchronization with n8n automation
-- ✅ **n8n Workflows** - Advanced automation platform deployed and licensed
-- ✅ **Production Deployment** - All services deployed on free hosting platforms
-- ✅ **Complete Integration** - Frontend → Backend → Google Sheets → Facebook
+- ✅ **n8n Workflows** - Advanced automation platform with Google Drive folder creation
+- ✅ **Production Deployment** - GitHub Codespaces optimized for minimal storage usage
+- ✅ **Complete Integration** - Frontend → Backend → Google Drive → Google Sheets → Facebook
 - ✅ **System Health Monitoring** - Comprehensive health checks and performance monitoring
 - ✅ **100% System Operational** - All components working perfectly
+- ✅ **Optimized Architecture** - Database stores metadata only, photos in Google Drive
 
 ## 🎯 **CURRENT STATUS:**
 - **Backend System**: ✅ Fully functional with FastAPI (Local + GitHub Codespaces)
-- **Database**: ✅ PostgreSQL with complete schema and data validation fixes
-- **Frontend**: ✅ React dashboard with autosell.mx branding (Local + Vercel)
-- **n8n Automation**: ✅ Deployed and configured (Local + GitHub Codespaces)
-- **Google Sheets Sync**: ✅ Working with n8n workflows
+- **Database**: ✅ PostgreSQL with optimized schema (metadata only, ~300MB usage)
+- **Frontend**: ✅ React dashboard with professional vehicle details page
+- **n8n Automation**: ✅ Deployed with Google Drive folder creation workflows
+- **Google Drive Integration**: ✅ Photos stored in Drive, database stores metadata only
+- **Google Sheets Sync**: ✅ Working with enhanced n8n workflows
 - **Facebook Integration**: ✅ Multi-account posting system operational
-- **Complete Automation**: ✅ Frontend → Database → Google Sheets → Facebook
+- **Complete Automation**: ✅ Frontend → Database → Google Drive → Google Sheets → Facebook
 - **System Health**: ✅ 100% operational with comprehensive monitoring
-- **Local Deployment**: ✅ Complete fix scripts and deployment automation
-- **Data Validation**: ✅ Pydantic validation fixes applied
-- **Frontend Dependencies**: ✅ Vite installation issues resolved
+- **Optimized Storage**: ✅ Minimal GitHub Codespaces usage (~300MB vs 15GB limit)
+- **Production Ready**: ✅ All components optimized for GitHub Codespaces deployment
+
+## 🏗️ **OPTIMIZED ARCHITECTURE:**
+### **Database (GitHub Codespaces - ~300MB):**
+- ✅ **Vehicle metadata** (marca, modelo, precio, estatus, etc.)
+- ✅ **Drive folder references** (folder_id, folder_url)
+- ✅ **Photo metadata** (drive_file_id, filename, file_size, mime_type)
+- ✅ **No actual photo files** stored in database
+
+### **Google Drive (External Storage - Unlimited):**
+- ✅ **All actual photos** stored in organized vehicle folders
+- ✅ **Automatic folder creation** via n8n workflows
+- ✅ **Professional photo URLs** for frontend display
+- ✅ **Unlimited storage** (Google Drive quota)
+- ✅ **Automatic backups** (Google Drive built-in)
 
 ## 🌐 **LIVE DEPLOYMENT**
 **Production URLs:**

@@ -4,7 +4,37 @@
 
 n8n workflows provide the automation backbone for Autosell.mx, handling Google Sheets integration, Facebook posting, and complete vehicle processing pipelines.
 
-## 📁 **Essential Workflows (4 Total)**
+## 📁 **Essential Workflows (5 Total)**
+
+### **0. Enhanced Google Sheets to Backend Sync with Drive Integration**
+**File**: `enhanced_google_sheets_to_backend_sync.json`
+
+**Purpose**: Enhanced version with Google Drive folder creation for new vehicles.
+
+**Trigger**: Webhook (`/webhook/sync-from-sheets`)
+
+**Flow**:
+```
+Webhook Trigger → Read Google Sheets → Process Data → Sync to Backend → Check New Vehicle → Create Drive Folder → Update Vehicle Drive Info
+                                                                     → Check Sold Status → Remove from Autosell/Facebook
+```
+
+**New Features**:
+- **Google Drive Integration**: Automatically creates Drive folders for new vehicles
+- **Folder Naming**: `Marca_Modelo_Año_Precio_Date` format
+- **Drive Folder Updates**: Updates vehicle records with Drive folder information
+- **Enhanced Data Processing**: Includes Drive folder creation flags
+
+**Configuration**:
+- **Google Drive**: Configure OAuth2 credentials for Drive API
+- **Parent Folder**: Set `YOUR_GOOGLE_DRIVE_PARENT_FOLDER_ID`
+- **Folder Permissions**: Automatically set to public read access
+
+**Benefits**:
+- **Automatic Organization**: Each vehicle gets its own Drive folder
+- **Professional Structure**: Consistent folder naming convention
+- **Photo Management**: Ready for photo uploads to organized folders
+- **Scalable Storage**: Unlimited Drive storage vs database limitations
 
 ### **1. Google Sheets to Backend Sync**
 **File**: `google_sheets_to_backend_sync.json`

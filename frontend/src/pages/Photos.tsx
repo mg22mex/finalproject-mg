@@ -338,7 +338,20 @@ const Photos: React.FC = () => {
                   <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
                     {/* Actual photo or fallback */}
                     <div className="aspect-square bg-gradient-to-br from-blue-50 to-gray-100 flex items-center justify-center relative overflow-hidden">
-                      {photo.drive_url ? (
+                      {photo.drive_file_id ? (
+                        <img
+                          src={`https://drive.google.com/thumbnail?id=${photo.drive_file_id}&sz=medium`}
+                          alt={photo.filename}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            // Fallback to placeholder if image fails to load
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const fallback = target.parentElement?.querySelector('.fallback') as HTMLElement;
+                            if (fallback) fallback.style.display = 'flex';
+                          }}
+                        />
+                      ) : photo.drive_url ? (
                         <img
                           src={photo.drive_url}
                           alt={photo.filename}
