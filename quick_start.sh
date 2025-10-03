@@ -55,7 +55,20 @@ source venv/bin/activate
 
 # Install dependencies
 print_status "Installing Python dependencies..."
+print_status "Upgrading pip first..."
+pip install --upgrade pip
+
+print_status "Installing core dependencies first..."
+pip install fastapi uvicorn sqlalchemy psycopg2-binary python-multipart
+
+print_status "Installing remaining dependencies..."
 pip install -r requirements.txt
+
+# If opencv-python fails, install without it
+if [ $? -ne 0 ]; then
+    print_warning "Some dependencies failed, trying without opencv-python..."
+    pip install fastapi uvicorn sqlalchemy psycopg2-binary python-multipart pydantic python-dotenv
+fi
 
 # Check if PostgreSQL is available (Codespace might have it pre-installed)
 print_status "Checking database availability..."
