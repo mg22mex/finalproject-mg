@@ -9,9 +9,17 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import os
 from dotenv import load_dotenv
+from typing import List, Dict, Any
+import json
 
 # Load environment variables
 load_dotenv()
+
+# In-memory storage (for development)
+vehicles_db: List[Dict[str, Any]] = []
+photos_db: List[Dict[str, Any]] = []
+vehicle_counter = 1
+photo_counter = 1
 
 # Create FastAPI application
 app = FastAPI(
@@ -58,11 +66,11 @@ async def root():
 async def get_vehicles(skip: int = 0, limit: int = 12, search: str = "", marca: str = "", modelo: str = "", año: str = "", estatus: str = "", precio_min: str = "", precio_max: str = ""):
     """Get all vehicles with filters and pagination"""
     return {
-        "vehicles": [],
-        "total": 0,
+        "vehicles": vehicles_db[skip:skip+limit],
+        "total": len(vehicles_db),
         "skip": skip,
         "limit": limit,
-        "message": "No vehicles found"
+        "message": f"Found {len(vehicles_db)} vehicles" if vehicles_db else "No vehicles found"
     }
 
 # Photos endpoint
@@ -262,16 +270,31 @@ async def get_detailed_health():
 @app.post("/vehicles/")
 async def create_vehicle(vehicle_data: dict):
     """Create a new vehicle"""
-    # For now, return a mock vehicle with the provided data
+    global vehicle_counter
+    
+    # Create vehicle object
+    vehicle = {
+        "id": vehicle_counter,
+        "marca": vehicle_data.get("marca", vehicle_data.get("make", "Unknown")),
+        "modelo": vehicle_data.get("modelo", vehicle_data.get("model", "Unknown")),
+        "año": vehicle_data.get("año", vehicle_data.get("year", 2024)),
+        "precio": vehicle_data.get("precio", vehicle_data.get("price", 0)),
+        "estatus": vehicle_data.get("estatus", vehicle_data.get("status", "disponible")),
+        "color": vehicle_data.get("color", ""),
+        "kilometraje": vehicle_data.get("kilometraje", ""),
+        "ubicacion": vehicle_data.get("ubicacion", ""),
+        "descripcion": vehicle_data.get("descripcion", vehicle_data.get("description", "")),
+        "external_id": vehicle_data.get("external_id", f"GS_{vehicle_counter}")
+    }
+    
+    # Store in database
+    vehicles_db.append(vehicle)
+    vehicle_counter += 1
+    
     return {
-        "id": 1,
-        "make": vehicle_data.get("make", "Unknown"),
-        "model": vehicle_data.get("model", "Unknown"),
-        "year": vehicle_data.get("year", 2024),
-        "price": vehicle_data.get("price", 0),
-        "status": vehicle_data.get("status", "available"),
-        "description": vehicle_data.get("description", ""),
-        "message": "Vehicle created successfully"
+        "id": vehicle["id"],
+        "message": "Vehicle created successfully",
+        "vehicle": vehicle
     }
 
 @app.put("/vehicles/{vehicle_id}")
