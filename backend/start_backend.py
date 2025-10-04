@@ -55,22 +55,26 @@ async def root():
 # Vehicles endpoint
 @app.get("/vehicles")
 @app.get("/vehicles/")
-async def get_vehicles():
-    """Get all vehicles"""
+async def get_vehicles(skip: int = 0, limit: int = 12, search: str = "", marca: str = "", modelo: str = "", año: str = "", estatus: str = "", precio_min: str = "", precio_max: str = ""):
+    """Get all vehicles with filters and pagination"""
     return {
         "vehicles": [],
         "total": 0,
+        "skip": skip,
+        "limit": limit,
         "message": "No vehicles found"
     }
 
 # Photos endpoint
 @app.get("/photos")
 @app.get("/photos/")
-async def get_photos():
-    """Get all photos"""
+async def get_photos(vehicle_id: int = None, skip: int = 0, limit: int = 12):
+    """Get all photos with filters"""
     return {
         "photos": [],
         "total": 0,
+        "skip": skip,
+        "limit": limit,
         "message": "No photos found"
     }
 
@@ -100,6 +104,33 @@ async def get_facebook():
     return {
         "status": "not_configured",
         "message": "Facebook integration not set up"
+    }
+
+# Facebook status endpoint
+@app.get("/facebook/status")
+async def get_facebook_status():
+    """Get Facebook reposting status"""
+    return {
+        "is_active": False,
+        "last_posted": None,
+        "posts_last_week": 0,
+        "active_vehicles": 0,
+        "next_scheduled": None,
+        "total_posts": 0,
+        "workflow_name": None
+    }
+
+# Facebook schedule endpoint
+@app.get("/facebook/schedule")
+async def get_facebook_schedule():
+    """Get Facebook posting schedule"""
+    return {
+        "is_active": False,
+        "time_of_day": "09:00",
+        "days_of_week": [1, 2, 3, 4, 5],
+        "max_posts_per_day": 5,
+        "post_interval_hours": 4,
+        "include_marketplace": True
     }
 
 # Dashboard endpoint
