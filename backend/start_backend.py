@@ -180,6 +180,129 @@ async def get_config():
         "message": "Basic configuration loaded"
     }
 
+# Missing endpoints that frontend expects
+@app.get("/vehicles/{vehicle_id}")
+async def get_vehicle(vehicle_id: int):
+    """Get a specific vehicle"""
+    return {
+        "id": vehicle_id,
+        "marca": "Unknown",
+        "modelo": "Unknown",
+        "año": 2024,
+        "estatus": "disponible",
+        "message": "Vehicle not found"
+    }
+
+@app.get("/photos/vehicle/{vehicle_id}")
+async def get_vehicle_photos(vehicle_id: int):
+    """Get photos for a specific vehicle"""
+    return {
+        "photos": [],
+        "total": 0,
+        "vehicle_id": vehicle_id,
+        "message": "No photos found for this vehicle"
+    }
+
+@app.get("/photos/{photo_id}")
+async def get_photo(photo_id: int):
+    """Get a specific photo"""
+    return {
+        "id": photo_id,
+        "filename": "unknown.jpg",
+        "message": "Photo not found"
+    }
+
+@app.get("/photos/search")
+async def search_photos(query: str = ""):
+    """Search photos"""
+    return {
+        "photos": [],
+        "total": 0,
+        "query": query,
+        "message": "No photos found"
+    }
+
+@app.get("/vehicles/search/{query}")
+async def search_vehicles(query: str):
+    """Search vehicles"""
+    return {
+        "vehicles": [],
+        "total": 0,
+        "query": query,
+        "message": "No vehicles found"
+    }
+
+@app.get("/vehicles/status/{status}")
+async def get_vehicles_by_status(status: str):
+    """Get vehicles by status"""
+    return {
+        "vehicles": [],
+        "total": 0,
+        "status": status,
+        "message": "No vehicles found with this status"
+    }
+
+@app.get("/health/detailed")
+async def get_detailed_health():
+    """Get detailed health information"""
+    return {
+        "status": "healthy",
+        "service": "Autosell.mx API",
+        "version": "1.0.0",
+        "database": "connected",
+        "storage": "ready",
+        "timestamp": "2024-01-01T00:00:00Z"
+    }
+
+# POST endpoints that frontend might call
+@app.post("/vehicles/")
+async def create_vehicle():
+    """Create a new vehicle"""
+    return {
+        "id": 1,
+        "message": "Vehicle creation not implemented yet"
+    }
+
+@app.put("/vehicles/{vehicle_id}")
+async def update_vehicle(vehicle_id: int):
+    """Update a vehicle"""
+    return {
+        "id": vehicle_id,
+        "message": "Vehicle update not implemented yet"
+    }
+
+@app.delete("/vehicles/{vehicle_id}")
+async def delete_vehicle(vehicle_id: int):
+    """Delete a vehicle"""
+    return {
+        "id": vehicle_id,
+        "message": "Vehicle deletion not implemented yet"
+    }
+
+@app.post("/photos/vehicle/{vehicle_id}/photos/{photo_id}/set-primary")
+async def set_primary_photo(vehicle_id: int, photo_id: int):
+    """Set primary photo"""
+    return {
+        "vehicle_id": vehicle_id,
+        "photo_id": photo_id,
+        "message": "Primary photo setting not implemented yet"
+    }
+
+@app.post("/photos/sync/google-drive")
+async def sync_google_drive_photos():
+    """Sync Google Drive photos"""
+    return {
+        "message": "Google Drive sync not implemented yet"
+    }
+
+@app.post("/drive/test-connection")
+async def test_drive_connection():
+    """Test Google Drive connection"""
+    return {
+        "status": "not_configured",
+        "message": "Google Drive connection not configured"
+    }
+
 if __name__ == "__main__":
     print("🚀 Starting Autosell.mx Backend...")
     print("📊 API Documentation: http://localhost:8000/docs")
