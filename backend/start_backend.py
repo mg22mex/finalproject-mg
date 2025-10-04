@@ -253,11 +253,24 @@ async def search_photos(query: str = ""):
 @app.get("/vehicles/search/{query}")
 async def search_vehicles(query: str):
     """Search vehicles"""
+    # Filter vehicles based on search query
+    filtered_vehicles = []
+    query_lower = query.lower()
+    
+    for vehicle in vehicles_db:
+        # Search in marca, modelo, año, color, descripcion
+        if (query_lower in str(vehicle.get('marca', '')).lower() or
+            query_lower in str(vehicle.get('modelo', '')).lower() or
+            query_lower in str(vehicle.get('año', '')).lower() or
+            query_lower in str(vehicle.get('color', '')).lower() or
+            query_lower in str(vehicle.get('descripcion', '')).lower()):
+            filtered_vehicles.append(vehicle)
+    
     return {
-        "vehicles": [],
-        "total": 0,
+        "vehicles": filtered_vehicles,
+        "total": len(filtered_vehicles),
         "query": query,
-        "message": "No vehicles found"
+        "message": f"Found {len(filtered_vehicles)} vehicles matching '{query}'"
     }
 
 @app.get("/vehicles/status/{status}")
