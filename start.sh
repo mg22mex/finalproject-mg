@@ -62,7 +62,7 @@ print_status "Using SQLite database (lightweight)"
 
 # Start backend on fixed port 8000
 print_status "Starting backend on port 8000..."
-python main_fixed.py --port 8000 &
+python start_backend.py &
 BACKEND_PID=$!
 sleep 3
 
