@@ -1,21 +1,19 @@
-nohup: no se tendrá en cuenta la entrada
-INFO:     Started server process [320567]
+INFO:     Started server process [78073]
 INFO:     Waiting for application startup.
-INFO:app.database:Database connection successful
-INFO:app.database:Database tables created successfully
 INFO:     Application startup complete.
-ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8000): address already in use
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.
-✅ API routers loaded successfully
-✅ API routers loaded successfully
-🚗 Starting Autosell.mx API v1.0.0
-📊 Loading configuration...
-🔌 Initializing database connections...
-🤖 Setting up automation workflows...
-✅ Database connection established
-✅ Database tables initialized
-🔄 Shutting down gracefully...
-💾 Closing database connections...
-📝 Saving logs...
-✅ Autosell.mx API stopped successfully
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+🚀 Starting Autosell.mx Backend...
+📊 API Documentation: http://localhost:8000/docs
+🔍 Health Check: http://localhost:8000/health
+🚗 Vehicles: http://localhost:8000/vehicles
+📸 Photos: http://localhost:8000/photos
+
+INFO:     127.0.0.1:55388 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55400 - "GET /vehicles HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55406 - "GET /photos HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55408 - "GET /facebook HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55418 - "GET /config HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36072 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51560 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51572 - "GET /vehicles HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51580 - "GET /photos HTTP/1.1" 200 OK
