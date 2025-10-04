@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# 🚀 Autosell.mx Master Startup Script
-# One script to rule them all - handles all issues automatically
+# 🚀 Autosell.mx Lightweight Startup Script
+# Optimized for GitHub Codespaces - minimal resource usage
 
-echo "🚀 AUTOSELL.MX MASTER STARTUP"
-echo "============================="
+echo "🚀 AUTOSELL.MX LIGHTWEIGHT STARTUP"
+echo "==================================="
 echo ""
 
 # Colors
@@ -12,7 +12,6 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
-PURPLE='\033[0;35m'
 NC='\033[0m'
 
 print_status() {
@@ -31,145 +30,83 @@ print_warning() {
     echo -e "${YELLOW}[WARNING]${NC} $1"
 }
 
-print_magic() {
-    echo -e "${PURPLE}[MAGIC]${NC} $1"
-}
-
 # Check directory
 if [ ! -d "backend" ] || [ ! -d "frontend" ]; then
     print_error "Please run from project root directory"
     exit 1
 fi
 
-print_magic "One script to start them all..."
-
-# Step 1: Nuclear cleanup
-print_status "🧹 Cleaning up existing processes..."
-pkill -f "python.*main" 2>/dev/null || true
+# Step 1: Light cleanup (only essential processes)
+print_status "🧹 Light cleanup..."
 pkill -f "uvicorn" 2>/dev/null || true
 pkill -f "http.server" 2>/dev/null || true
-pkill -f "node.*serve" 2>/dev/null || true
-sleep 3
+sleep 1
 
-# Step 2: Backend Setup
-print_status "🔧 Setting up backend environment..."
+# Step 2: Backend Setup (minimal)
+print_status "🔧 Setting up backend..."
 cd backend
 
-# Create venv if needed
-if [ ! -d "venv" ]; then
-    print_status "Creating Python virtual environment..."
+# Use existing venv if available
+if [ -d "venv" ]; then
+    source venv/bin/activate
+    print_status "Using existing virtual environment"
+else
+    print_status "Creating minimal virtual environment..."
     python3 -m venv venv
+    source venv/bin/activate
+    pip install --quiet fastapi uvicorn sqlalchemy python-dotenv
 fi
 
-# Activate environment
-source venv/bin/activate
+# Use SQLite for simplicity (no PostgreSQL setup)
+print_status "Using SQLite database (lightweight)"
 
-# Install dependencies with fallbacks
-print_status "Installing Python dependencies..."
-pip install --upgrade pip
-
-# Install core dependencies first
-pip install fastapi uvicorn sqlalchemy psycopg2-binary python-multipart pydantic python-dotenv
-
-# Try to install remaining dependencies
-pip install -r requirements.txt 2>/dev/null || print_warning "Some optional dependencies failed, continuing..."
-
-# Handle database
-print_status "Setting up database..."
-if command -v psql &> /dev/null; then
-    print_status "PostgreSQL found, attempting to start..."
-    sudo service postgresql start 2>/dev/null || print_warning "PostgreSQL start failed, using SQLite fallback"
-else
-    print_warning "PostgreSQL not found, using SQLite"
-fi
-
-# Find available port
-print_status "Finding available port..."
-for port in 8000 8001 8002 8003; do
-    if ! lsof -ti:$port >/dev/null 2>&1; then
-        print_success "Using port $port for backend"
-        BACKEND_PORT=$port
-        break
-    fi
-done
-
-if [ -z "$BACKEND_PORT" ]; then
-    print_error "No available ports found"
-    exit 1
-fi
-
-# Start backend
-print_status "Starting FastAPI backend on port $BACKEND_PORT..."
-python main_fixed.py --port $BACKEND_PORT &
+# Start backend on fixed port 8000
+print_status "Starting backend on port 8000..."
+python main_fixed.py --port 8000 &
 BACKEND_PID=$!
-sleep 5
+sleep 3
 
-if ps -p $BACKEND_PID > /dev/null; then
-    print_success "Backend started successfully (PID: $BACKEND_PID)"
+# Quick health check
+if curl -s http://localhost:8000/health > /dev/null 2>&1; then
+    print_success "Backend is running (PID: $BACKEND_PID)"
 else
-    print_error "Backend failed to start"
-    exit 1
+    print_warning "Backend may need more time to start"
 fi
 
-# Step 3: Frontend Setup
+# Step 3: Frontend Setup (minimal)
 print_status "🎨 Setting up frontend..."
 cd ../frontend
 
-# Install dependencies
-print_status "Installing Node.js dependencies..."
-npm install
-
-# Build frontend
-print_status "Building React frontend..."
-npm run build
-
-# Find available port for frontend
-print_status "Finding available port for frontend..."
-for port in 3000 3001 3002 3003; do
-    if ! lsof -ti:$port >/dev/null 2>&1; then
-        print_success "Using port $port for frontend"
-        FRONTEND_PORT=$port
-        break
-    fi
-done
-
-if [ -z "$FRONTEND_PORT" ]; then
-    print_error "No available ports found for frontend"
-    exit 1
+# Check if dist exists, if not build quickly
+if [ ! -d "dist" ]; then
+    print_status "Building frontend..."
+    npm install --silent
+    npm run build --silent
 fi
 
-# Start frontend
-print_status "Starting frontend on port $FRONTEND_PORT..."
+# Start frontend on fixed port 3000
+print_status "Starting frontend on port 3000..."
 cd dist
-python3 -m http.server $FRONTEND_PORT &
+python3 -m http.server 3000 &
 FRONTEND_PID=$!
-sleep 3
+sleep 2
 
-if ps -p $FRONTEND_PID > /dev/null; then
-    print_success "Frontend started successfully (PID: $FRONTEND_PID)"
+# Quick check
+if curl -s http://localhost:3000 > /dev/null 2>&1; then
+    print_success "Frontend is running (PID: $FRONTEND_PID)"
 else
-    print_error "Frontend failed to start"
-    exit 1
+    print_warning "Frontend may need more time to start"
 fi
 
-# Step 4: Display Results
+# Step 4: Display Results (minimal)
 echo ""
-echo "🎉 AUTOSELL.MX SYSTEM READY!"
-echo "============================"
+echo "🎉 SYSTEM READY!"
+echo "================"
 echo ""
-print_success "🚀 Backend API: http://localhost:$BACKEND_PORT"
-print_success "🎨 Frontend Dashboard: http://localhost:$FRONTEND_PORT"
-print_success "📚 API Documentation: http://localhost:$BACKEND_PORT/docs"
+print_success "🚀 Backend: http://localhost:8000"
+print_success "🎨 Frontend: http://localhost:3000"
+print_success "📚 API Docs: http://localhost:8000/docs"
 echo ""
-print_status "System Components:"
-echo "  ✅ FastAPI Backend (Port $BACKEND_PORT) - PID: $BACKEND_PID"
-echo "  ✅ React Frontend (Port $FRONTEND_PORT) - PID: $FRONTEND_PID"
-echo "  ✅ Database (PostgreSQL/SQLite)"
-echo "  ✅ Google Drive Integration"
+print_status "Process IDs: Backend=$BACKEND_PID, Frontend=$FRONTEND_PID"
 echo ""
-print_status "Management Commands:"
-echo "  Stop system: kill $BACKEND_PID $FRONTEND_PID"
-echo "  Test backend: curl http://localhost:$BACKEND_PORT/health"
-echo "  Test frontend: curl http://localhost:$FRONTEND_PORT"
-echo ""
-print_magic "🚀 Ready for production use!"
+print_status "💡 Lightweight mode - optimized for Codespaces"
