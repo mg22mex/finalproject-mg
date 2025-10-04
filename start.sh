@@ -40,7 +40,8 @@ fi
 print_status "🧹 Light cleanup..."
 pkill -f "uvicorn" 2>/dev/null || true
 pkill -f "http.server" 2>/dev/null || true
-sleep 1
+pkill -f "python.*start_backend" 2>/dev/null || true
+sleep 2
 
 # Step 2: Backend Setup (minimal)
 print_status "🔧 Setting up backend..."
