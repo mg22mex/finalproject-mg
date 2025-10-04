@@ -166,21 +166,37 @@ async def get_dashboard():
 @app.get("/dashboard/stats")
 async def get_dashboard_stats():
     """Get dashboard statistics"""
+    # Calculate actual statistics from vehicles database
+    total_vehicles = len(vehicles_db)
+    available_vehicles = len([v for v in vehicles_db if v.get('estatus', '').lower() == 'disponible'])
+    sold_vehicles = len([v for v in vehicles_db if v.get('estatus', '').lower() == 'vendido'])
+    reserved_vehicles = len([v for v in vehicles_db if v.get('estatus', '').lower() == 'reservado'])
+    unavailable_vehicles = len([v for v in vehicles_db if v.get('estatus', '').lower() == 'no disponible'])
+    
+    # Calculate financial statistics
+    prices = [v.get('precio', 0) for v in vehicles_db if v.get('precio', 0) > 0]
+    average_price = sum(prices) / len(prices) if prices else 0
+    total_value = sum(prices)
+    
+    # Calculate photo statistics
+    total_photos = len(photos_db)
+    vehicles_with_photos = len(set(p.get('vehicle_id') for p in photos_db))
+    
     return {
-        "total_vehicles": 0,
-        "available_vehicles": 0,
-        "sold_vehicles": 0,
-        "reserved_vehicles": 0,
-        "unavailable_vehicles": 0,
-        "average_price": 0,
-        "total_value": 0,
-        "vehicles_change": 0,
-        "available_change": 0,
-        "value_change": 0,
-        "total_photos": 0,
-        "photos_change": 0,
-        "vehicles_with_photos": 0,
-        "primary_photos": 0
+        "total_vehicles": total_vehicles,
+        "available_vehicles": available_vehicles,
+        "sold_vehicles": sold_vehicles,
+        "reserved_vehicles": reserved_vehicles,
+        "unavailable_vehicles": unavailable_vehicles,
+        "average_price": round(average_price, 2),
+        "total_value": total_value,
+        "vehicles_change": 0,  # Could be calculated from historical data
+        "available_change": 0,  # Could be calculated from historical data
+        "value_change": 0,  # Could be calculated from historical data
+        "total_photos": total_photos,
+        "photos_change": 0,  # Could be calculated from historical data
+        "vehicles_with_photos": vehicles_with_photos,
+        "primary_photos": 0  # Could be calculated from photos with is_primary=True
     }
 
 # Configuration endpoint

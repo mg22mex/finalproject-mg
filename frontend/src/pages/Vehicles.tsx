@@ -33,7 +33,11 @@ const Vehicles: React.FC = () => {
       skip: (pagination.page - 1) * pagination.limit,
       limit: pagination.limit,
     }),
-    { keepPreviousData: true }
+    { 
+      keepPreviousData: true,
+      staleTime: 0, // Always fetch fresh data
+      cacheTime: 0, // Don't cache data
+    }
   )
 
   const handleFilterChange = (newFilters: Partial<typeof filters>) => {
