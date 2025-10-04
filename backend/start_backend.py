@@ -54,6 +54,7 @@ async def root():
 
 # Vehicles endpoint
 @app.get("/vehicles")
+@app.get("/vehicles/")
 async def get_vehicles():
     """Get all vehicles"""
     return {
@@ -64,6 +65,7 @@ async def get_vehicles():
 
 # Photos endpoint
 @app.get("/photos")
+@app.get("/photos/")
 async def get_photos():
     """Get all photos"""
     return {
@@ -79,6 +81,44 @@ async def get_facebook():
     return {
         "status": "not_configured",
         "message": "Facebook integration not set up"
+    }
+
+# Dashboard endpoint
+@app.get("/dashboard")
+async def get_dashboard():
+    """Get dashboard data"""
+    return {
+        "total_vehicles": 0,
+        "available_vehicles": 0,
+        "total_value": 0,
+        "photos_uploaded": 0,
+        "recent_vehicles": [],
+        "system_status": {
+            "api": "healthy",
+            "database": "connected",
+            "photo_storage": "ready"
+        }
+    }
+
+# Dashboard stats endpoint (for frontend API calls)
+@app.get("/dashboard/stats")
+async def get_dashboard_stats():
+    """Get dashboard statistics"""
+    return {
+        "total_vehicles": 0,
+        "available_vehicles": 0,
+        "sold_vehicles": 0,
+        "reserved_vehicles": 0,
+        "unavailable_vehicles": 0,
+        "average_price": 0,
+        "total_value": 0,
+        "vehicles_change": 0,
+        "available_change": 0,
+        "value_change": 0,
+        "total_photos": 0,
+        "photos_change": 0,
+        "vehicles_with_photos": 0,
+        "primary_photos": 0
     }
 
 # Configuration endpoint
