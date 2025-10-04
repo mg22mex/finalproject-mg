@@ -27,7 +27,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Allow all origins for development
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -72,6 +72,25 @@ async def get_photos():
         "photos": [],
         "total": 0,
         "message": "No photos found"
+    }
+
+# Photo upload endpoint
+@app.post("/photos/upload/{vehicle_id}")
+async def upload_photo(vehicle_id: int):
+    """Upload photo for vehicle"""
+    return {
+        "message": "Photo upload not implemented yet",
+        "vehicle_id": vehicle_id
+    }
+
+# Photo stats endpoint
+@app.get("/photos/stats/overview")
+async def get_photo_stats():
+    """Get photo statistics"""
+    return {
+        "total_photos": 0,
+        "photos_by_vehicle": {},
+        "storage_used": 0
     }
 
 # Facebook endpoint
