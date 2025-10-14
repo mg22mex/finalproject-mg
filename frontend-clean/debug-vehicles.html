@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Vehicles - Autosell.mx</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 20px auto; padding: 20px; background-color: #f4f4f4; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .status.info { background-color: #e0f7fa; color: #00796b; }
+        .status.success { background-color: #e8f5e9; color: #2e7d32; }
+        .status.error { background-color: #ffebee; color: #c62828; }
+        .vehicle-card { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px; background: #f9f9f9; }
+        .vehicle-name { font-weight: bold; font-size: 18px; color: #333; }
+        .vehicle-details { color: #666; margin: 5px 0; }
+        .vehicle-price { font-weight: bold; color: #2e7d32; font-size: 16px; }
+        button { padding: 10px 15px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background-color: #45a049; }
+        .debug-info { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 4px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug Vehicles - Autosell.mx</h1>
+        <p>This page will test the vehicle loading functionality and show detailed debugging information.</p>
+        
+        <button onclick="testAPI()">Test API Connection</button>
+        <button onclick="loadVehicles()">Load All Vehicles</button>
+        <button onclick="clearResults()">Clear Results</button>
+        
+        <div id="status"></div>
+        <div id="debug-info"></div>
+        <div id="vehicles-container"></div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'http://localhost:8001';
+        
+        function addStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            const statusClass = `status ${type}`;
+            statusDiv.innerHTML += `<div class="${statusClass}">${message}</div>`;
+        }
+        
+        function addDebugInfo(info) {
+            const debugDiv = document.getElementById('debug-info');
+            debugDiv.innerHTML += `<div class="debug-info">${info}</div>`;
+        }
+        
+        function clearResults() {
+            document.getElementById('status').innerHTML = '';
+            document.getElementById('debug-info').innerHTML = '';
+            document.getElementById('vehicles-container').innerHTML = '';
+        }
+        
+        async function testAPI() {
+            addStatus('🔄 Testing API connection...', 'info');
+            try {
+                const response = await fetch(`${BACKEND_URL}/vehicles?limit=5`);
+                addDebugInfo(`Response status: ${response.status}`);
+                addDebugInfo(`Response headers: ${JSON.stringify([...response.headers.entries()])}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addDebugInfo(`Response data: ${JSON.stringify(data, null, 2)}`);
+                    addStatus(`✅ API connection successful! Found ${data.total} vehicles`, 'success');
+                } else {
+                    addStatus(`❌ API error: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                addStatus(`❌ Network error: ${error.message}`, 'error');
+                addDebugInfo(`Error details: ${error.stack}`);
+            }
+        }
+        
+        async function loadVehicles() {
+            addStatus('🔄 Loading all vehicles...', 'info');
+            try {
+                const response = await fetch(`${BACKEND_URL}/vehicles?limit=200`);
+                addDebugInfo(`Fetching: ${BACKEND_URL}/vehicles?limit=200`);
+                addDebugInfo(`Response status: ${response.status}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addDebugInfo(`Total vehicles: ${data.total}`);
+                    addDebugInfo(`Vehicles array length: ${data.vehicles?.length || 0}`);
+                    addDebugInfo(`First vehicle: ${JSON.stringify(data.vehicles?.[0] || 'None', null, 2)}`);
+                    
+                    if (data.vehicles && data.vehicles.length > 0) {
+                        addStatus(`✅ Loaded ${data.vehicles.length} vehicles successfully!`, 'success');
+                        displayVehicles(data.vehicles);
+                    } else {
+                        addStatus('⚠️ No vehicles found in response', 'error');
+                    }
+                } else {
+                    addStatus(`❌ API error: ${response.status}`, 'error');
+                    const errorText = await response.text();
+                    addDebugInfo(`Error response: ${errorText}`);
+                }
+            } catch (error) {
+                addStatus(`❌ Network error: ${error.message}`, 'error');
+                addDebugInfo(`Error details: ${error.stack}`);
+            }
+        }
+        
+        function displayVehicles(vehicles) {
+            const container = document.getElementById('vehicles-container');
+            addDebugInfo(`Displaying ${vehicles.length} vehicles`);
+            
+            if (!vehicles || vehicles.length === 0) {
+                container.innerHTML = '<div class="status error">No vehicles to display</div>';
+                return;
+            }
+            
+            container.innerHTML = vehicles.slice(0, 10).map(vehicle => `
+                <div class="vehicle-card">
+                    <div class="vehicle-name">${vehicle.marca} ${vehicle.modelo}</div>
+                    <div class="vehicle-details">Año: ${vehicle.año}</div>
+                    <div class="vehicle-details">Color: ${vehicle.color}</div>
+                    <div class="vehicle-details">Kilometraje: ${vehicle.kilometraje}</div>
+                    <div class="vehicle-details">Ubicación: ${vehicle.ubicacion}</div>
+                    <div class="vehicle-price">$${vehicle.precio?.toLocaleString() || '0'}</div>
+                    <div class="vehicle-details">ID: ${vehicle.id}</div>
+                </div>
+            `).join('');
+            
+            if (vehicles.length > 10) {
+                container.innerHTML += `<div class="status info">Showing first 10 of ${vehicles.length} vehicles</div>`;
+            }
+        }
+        
+        // Auto-load on page load
+        window.addEventListener('load', function() {
+            addStatus('🚀 Debug page loaded', 'info');
+            testAPI();
+        });
+    </script>
+</body>
+</html>

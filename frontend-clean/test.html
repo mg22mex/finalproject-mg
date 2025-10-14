@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Test - Autosell.mx</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 20px; background-color: #f4f4f4; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        .status { padding: 10px; margin-top: 10px; border-radius: 4px; }
+        .status.info { background-color: #e0f7fa; color: #00796b; }
+        .status.success { background-color: #e8f5e9; color: #2e7d32; }
+        .status.error { background-color: #ffebee; color: #c62828; }
+        button { padding: 10px 15px; margin: 5px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Server Test - Autosell.mx</h1>
+        <p>Testing if both frontend and backend servers are running correctly.</p>
+
+        <button onclick="testFrontend()">Test Frontend (Port 3002)</button>
+        <button onclick="testBackend()">Test Backend (Port 8001)</button>
+        <button onclick="testMainApp()">Test Main Application</button>
+
+        <div id="status"></div>
+    </div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            statusDiv.appendChild(div);
+            console.log(message);
+        }
+
+        function testFrontend() {
+            log('🌐 Testing frontend server on port 3002...', 'info');
+            fetch('http://localhost:3002/')
+                .then(response => {
+                    if (response.ok) {
+                        log('✅ Frontend server is running on port 3002', 'success');
+                    } else {
+                        log('❌ Frontend server error: ' + response.status, 'error');
+                    }
+                })
+                .catch(error => {
+                    log('❌ Frontend server not accessible: ' + error.message, 'error');
+                });
+        }
+
+        function testBackend() {
+            log('🔧 Testing backend server on port 8001...', 'info');
+            fetch('http://localhost:8001/health')
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Backend error: ' + response.status);
+                    }
+                })
+                .then(data => {
+                    log('✅ Backend server is running: ' + data.status, 'success');
+                })
+                .catch(error => {
+                    log('❌ Backend server not accessible: ' + error.message, 'error');
+                });
+        }
+
+        function testMainApp() {
+            log('🎯 Testing main application...', 'info');
+            window.open('http://localhost:3002/', '_blank');
+            log('✅ Main application opened in new tab', 'success');
+        }
+
+        // Auto-test on page load
+        window.addEventListener('load', function() {
+            log('🚀 Page loaded, running automatic tests...', 'info');
+            setTimeout(testFrontend, 1000);
+            setTimeout(testBackend, 2000);
+        });
+    </script>
+</body>
+</html>

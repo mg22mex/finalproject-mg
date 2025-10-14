@@ -1,0 +1,324 @@
+{
+  "name": "Google Sheets to Backend Sync (MCP Enhanced)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "webhook-sync",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Manual Sync Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "sync-trigger"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": "={{ $json.sheet_id }}",
+        "sheetName": "={{ $json.sheet_name || 'Vehicles' }}",
+        "range": "={{ $json.range || 'A101:J231' }}",
+        "options": {
+          "valueRenderOption": "UNFORMATTED_VALUE",
+          "dateTimeRenderOption": "SERIAL_NUMBER"
+        }
+      },
+      "id": "google-sheets-read",
+      "name": "Read Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// AI-powered data validation and transformation\nconst items = $input.all();\nconst processedItems = [];\n\nfor (const item of items) {\n  const data = item.json;\n  \n  // AI validation and cleaning\n  const vehicleData = {\n    marca: data.A || data.Marca || 'Unknown',\n    modelo: data.B || data.Modelo || 'Unknown',\n    año: parseInt(data.C || data.Año) || new Date().getFullYear(),\n    precio: parseInt(data.D || data.Precio) || 0,\n    estatus: data.E || data.Estatus || 'DISPONIBLE',\n    color: data.F || data.Color || 'Unknown',\n    kilometraje: data.G || data.Kilometraje || '',\n    ubicacion: data.H || data.Ubicacion || 'PERIFERICO',\n    descripcion: data.I || data.Descripcion || '',\n    external_id: `GS_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`\n  };\n  \n  // AI-powered data validation\n  if (vehicleData.año < 1990 || vehicleData.año > new Date().getFullYear() + 1) {\n    vehicleData.año = new Date().getFullYear();\n  }\n  \n  if (vehicleData.precio <= 0) {\n    vehicleData.precio = 100000; // Default price\n  }\n  \n  // Clean and standardize text fields\n  vehicleData.marca = vehicleData.marca.toUpperCase().trim();\n  vehicleData.modelo = vehicleData.modelo.toUpperCase().trim();\n  vehicleData.color = vehicleData.color.toUpperCase().trim();\n  vehicleData.estatus = vehicleData.estatus.toUpperCase().trim();\n  \n  processedItems.push({ json: vehicleData });\n}\n\nreturn processedItems;"
+      },
+      "id": "ai-data-processor",
+      "name": "AI Data Processor",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {
+          "continueOnFail": true
+        }
+      },
+      "id": "batch-processor",
+      "name": "Batch Processor",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:8001/vehicles/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "vehicle_data",
+              "value": "={{ $json }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000,
+          "retry": {
+            "enabled": true,
+            "maxRetries": 3,
+            "retryDelay": 1000
+          }
+        }
+      },
+      "id": "backend-api",
+      "name": "Backend API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "success-condition",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "success",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "success-check",
+      "name": "Success Check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:8001/facebook/vehicles/{{ $json.vehicle_id }}/post",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "page_id",
+              "value": "={{ $json.page_id }}"
+            },
+            {
+              "name": "access_token",
+              "value": "={{ $json.access_token }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "facebook-posting",
+      "name": "Facebook Posting",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  \"status\": \"success\",\n  \"message\": \"Sync completed successfully\",\n  \"vehicles_processed\": $json.total_processed,\n  \"vehicles_created\": $json.created_count,\n  \"vehicles_updated\": $json.updated_count,\n  \"errors\": $json.error_count,\n  \"timestamp\": new Date().toISOString()\n} }}"
+      },
+      "id": "success-response",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1780, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  \"status\": \"error\",\n  \"message\": \"Sync failed\",\n  \"error\": $json.error,\n  \"timestamp\": new Date().toISOString()\n} }}"
+      },
+      "id": "error-response",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1780, 400]
+    },
+    {
+      "parameters": {
+        "url": "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "🚨 Autosell.mx Sync Error: {{ $json.error }}"
+            }
+          ]
+        }
+      },
+      "id": "error-notification",
+      "name": "Error Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 500]
+    }
+  ],
+  "connections": {
+    "Manual Sync Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "AI Data Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Data Processor": {
+      "main": [
+        [
+          {
+            "node": "Batch Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Batch Processor": {
+      "main": [
+        [
+          {
+            "node": "Backend API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Backend API": {
+      "main": [
+        [
+          {
+            "node": "Success Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Success Check": {
+      "main": [
+        [
+          {
+            "node": "Facebook Posting",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Facebook Posting": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Response": {
+      "main": [
+        [
+          {
+            "node": "Error Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2024-10-14T18:00:00.000Z",
+      "updatedAt": "2024-10-14T18:00:00.000Z",
+      "id": "autosell-sync",
+      "name": "Autosell Sync"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2024-10-14T18:00:00.000Z",
+  "versionId": "1"
+}

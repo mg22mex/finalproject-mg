@@ -6,9 +6,10 @@ The Autosell.mx API provides comprehensive vehicle management and automation cap
 
 ## 🔗 **Base URLs**
 
-- **Development**: `http://localhost:8000`
+- **Development**: `http://localhost:8001`
 - **Production**: `https://your-backend-url.com`
-- **API Documentation**: `http://localhost:8000/docs`
+- **API Documentation**: `http://localhost:8001/docs`
+- **Current Status**: Backend running on port 8001 with 133 vehicles imported
 
 ## 🔐 **Authentication**
 
@@ -484,18 +485,21 @@ GET /vehicles/?marca=Toyota&año=2020&precio_min=200000&search=camry
 ### **Test Endpoints**
 ```bash
 # Health check
-curl http://localhost:8000/health
+curl http://localhost:8001/health
 
-# Get all vehicles
-curl http://localhost:8000/vehicles/
+# Get all vehicles (133 vehicles available)
+curl http://localhost:8001/vehicles/
 
 # Create vehicle
-curl -X POST http://localhost:8000/vehicles/ \
+curl -X POST http://localhost:8001/vehicles/ \
   -H "Content-Type: application/json" \
   -d '{"marca": "Toyota", "modelo": "Camry", "año": 2020}'
 
 # Test Google Sheets sync
-curl -X POST http://localhost:8000/frontend/trigger-sheets-sync
+curl -X POST http://localhost:8001/frontend/trigger-sheets-sync
+
+# Get dashboard stats
+curl http://localhost:8001/dashboard/stats
 ```
 
 ### **Integration Tests**
@@ -506,9 +510,10 @@ python test_complete_integration.py
 
 ## 📚 **Additional Resources**
 
-- **Interactive API Docs**: http://localhost:8000/docs
-- **OpenAPI Schema**: http://localhost:8000/openapi.json
-- **ReDoc Documentation**: http://localhost:8000/redoc
+- **Interactive API Docs**: http://localhost:8001/docs
+- **OpenAPI Schema**: http://localhost:8001/openapi.json
+- **ReDoc Documentation**: http://localhost:8001/redoc
+- **Current Status**: API fully operational with 133 vehicles imported
 
 ## 🔄 **Rate Limiting**
 

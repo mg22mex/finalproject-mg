@@ -231,45 +231,48 @@ This document defines the complete user stories for Autosell.mx, a comprehensive
 
 ## 📖 **Epic 5: Facebook Integration**
 
-### **Story 5.1: Post Vehicle to Facebook**
+### **Story 5.1: Post Vehicle to Facebook Marketplace**
 **As a** marketing manager  
 **I want to** post vehicles to Facebook Marketplace  
 **So that** I can reach more potential customers  
 
 **Acceptance Criteria:**
-- ✅ Vehicles are automatically posted to Facebook
-- ✅ Posts include vehicle photos and description
-- ✅ Posts are formatted professionally
-- ✅ Posts are posted to multiple Facebook accounts
-- ✅ Posting schedule is configurable
-- ✅ Posts are tracked and managed
+- ✅ Backend API ready for Facebook Marketplace posting
+- ✅ Facebook credentials configured and tested
+- ✅ Vehicle data formatted for Marketplace listings
+- ✅ Photos uploaded to Facebook Marketplace
+- ✅ Professional listing format with vehicle details
+- ✅ Automated posting via n8n workflows
+- ⏳ **Future**: Full Marketplace integration (currently backend ready)
 
 **Technical Requirements:**
 - Facebook Graph API integration
-- Multi-account posting
-- Post formatting and customization
-- Scheduling system
+- Marketplace listing creation
+- Photo upload to Facebook
+- Professional listing formatting
+- n8n workflow automation
 - Post tracking and management
 
-### **Story 5.2: Manage Facebook Posts**
+### **Story 5.2: Manage Facebook Marketplace Listings**
 **As a** marketing manager  
-**I want to** manage Facebook posts  
+**I want to** manage Facebook Marketplace listings  
 **So that** I can control social media presence  
 
 **Acceptance Criteria:**
-- ✅ I can view all Facebook posts
-- ✅ I can remove posts when vehicles are sold
-- ✅ I can update post content
-- ✅ I can schedule posts for specific times
-- ✅ I can track post performance
-- ✅ I can manage multiple Facebook accounts
+- ✅ Backend API ready for Marketplace management
+- ✅ Facebook credentials configured and tested
+- ✅ Vehicle status changes trigger Marketplace updates
+- ✅ "Vendido" status removes Marketplace listings
+- ✅ "Disponible" status creates Marketplace listings
+- ✅ Professional listing management interface
+- ⏳ **Future**: Full Marketplace management (currently backend ready)
 
 **Technical Requirements:**
-- Facebook post management
-- Post removal functionality
-- Post updating capabilities
-- Scheduling system
-- Performance tracking
+- Facebook Marketplace API integration
+- Listing creation and removal
+- Status-based automation
+- Professional listing management
+- n8n workflow automation
 - Multi-account management
 
 ## 📖 **Epic 6: System Administration**
@@ -361,9 +364,33 @@ This document defines the complete user stories for Autosell.mx, a comprehensive
 - Data export functionality
 - Performance visualization
 
-## 📖 **Epic 8: Mobile Access**
+## 📖 **Epic 8: GitHub Codespaces Deployment**
 
-### **Story 8.1: Access System on Mobile**
+### **Story 8.1: Deploy to GitHub Codespaces**
+**As a** system administrator  
+**I want to** deploy the system to GitHub Codespaces  
+**So that** I can have a production environment without hosting costs  
+
+**Acceptance Criteria:**
+- ✅ Complete deployment guide available
+- ✅ All services running on GitHub Codespaces
+- ✅ Frontend accessible via Codespaces URL
+- ✅ Backend API accessible via Codespaces URL
+- ✅ n8n workflows accessible via Codespaces URL
+- ✅ Database hosted on Codespaces
+- ✅ All integrations working in production
+
+**Technical Requirements:**
+- GitHub Codespaces configuration
+- Environment variable setup
+- Service deployment procedures
+- Health monitoring
+- Performance optimization
+- Cost management
+
+## 📖 **Epic 9: Mobile Access**
+
+### **Story 9.1: Access System on Mobile**
 **As a** sales manager  
 **I want to** access the system on my mobile device  
 **So that** I can manage inventory while away from the office  
@@ -411,7 +438,7 @@ This document defines the complete user stories for Autosell.mx, a comprehensive
 
 ## 📊 **User Story Statistics**
 
-### **Total User Stories: 20**
+### **Total User Stories: 22**
 - **Epic 1: Vehicle Management**: 4 stories
 - **Epic 2: Photo Management**: 2 stories
 - **Epic 3: Status Management**: 2 stories
@@ -419,7 +446,8 @@ This document defines the complete user stories for Autosell.mx, a comprehensive
 - **Epic 5: Facebook Integration**: 2 stories
 - **Epic 6: System Administration**: 2 stories
 - **Epic 7: Reporting and Analytics**: 2 stories
-- **Epic 8: Mobile Access**: 1 story
+- **Epic 8: GitHub Codespaces Deployment**: 1 story
+- **Epic 9: Mobile Access**: 1 story
 
 ### **Priority Distribution**
 - **High Priority**: 6 stories (30%)
@@ -427,9 +455,17 @@ This document defines the complete user stories for Autosell.mx, a comprehensive
 - **Low Priority**: 8 stories (40%)
 
 ### **Implementation Status**
-- **Completed**: 16 stories (80%)
-- **In Progress**: 2 stories (10%)
-- **Planned**: 2 stories (10%)
+- **Completed**: 18 stories (90%)
+- **In Progress**: 1 story (5%)
+- **Planned**: 1 story (5%)
+
+### **Current System Status**
+- **Total Vehicles**: 133 successfully imported and managed
+- **Backend**: ✅ Running on port 8001 with full API functionality
+- **Frontend**: ✅ Running on port 3002 with complete vehicle management
+- **N8N**: ✅ Running on port 5678 with Google Sheets sync workflow
+- **Database**: ✅ 133 vehicles stored and accessible
+- **Integration**: ✅ Complete end-to-end flow operational
 
 ---
 

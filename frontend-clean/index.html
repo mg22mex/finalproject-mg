@@ -1,0 +1,2108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autosell.mx - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                            <div class="w-2 h-2 bg-white rounded-full"></div>
+                        </div>
+                        <div class="w-8 h-8 bg-red-600 rounded flex items-center justify-center">
+                            <div class="w-2 h-2 bg-white rounded-full"></div>
+                        </div>
+                        <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                            <div class="w-2 h-2 bg-white rounded-full"></div>
+                        </div>
+                        <span class="ml-3 text-xl font-bold text-gray-900">Autosell.mx</span>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#" onclick="showPage('dashboard')" class="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Dashboard</a>
+                    <a href="#" onclick="showPage('vehicles')" class="text-gray-600 hover:text-gray-900 transition-colors">Vehículos <i class="fas fa-chevron-right text-xs ml-1"></i></a>
+                    <a href="#" onclick="showPage('photos')" class="text-gray-600 hover:text-gray-900 transition-colors">Fotos <i class="fas fa-chevron-right text-xs ml-1"></i></a>
+                    <a href="#" onclick="showPage('facebook')" class="text-gray-600 hover:text-gray-900 transition-colors">Facebook <i class="fas fa-chevron-right text-xs ml-1"></i></a>
+                    <a href="#" onclick="showPage('settings')" class="text-gray-600 hover:text-gray-900 transition-colors">Configuración <i class="fas fa-chevron-right text-xs ml-1"></i></a>
+                </nav>
+
+                <!-- Add Vehicle Button -->
+                <button onclick="openVehicleModal()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+                    <i class="fas fa-plus"></i>
+                    <span>Agregar Vehículo</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Dashboard Page -->
+        <div id="dashboard-page">
+        <!-- Dashboard Header -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
+                    <p class="text-gray-600">Bienvenido a Autosell.mx - Tu Sistema de Gestión de Vehículos</p>
+                </div>
+                <button onclick="forceRefreshDashboard()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Actualizar Datos</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total Vehicles -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total de Vehículos</p>
+                        <p class="text-2xl font-bold text-gray-900">0</p>
+                        <p class="text-sm text-gray-500">0%</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-car text-blue-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Available Vehicles -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Vehículos Disponibles</p>
+                        <p class="text-2xl font-bold text-gray-900">0</p>
+                        <p class="text-sm text-gray-500">0%</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-car text-green-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Value -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Valor Total</p>
+                        <p class="text-2xl font-bold text-gray-900">$0</p>
+                        <p class="text-sm text-gray-500">0%</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-dollar-sign text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Photos Uploaded -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Fotos Subidas</p>
+                        <p class="text-2xl font-bold text-gray-900">0</p>
+                        <p class="text-sm text-gray-500">0%</p>
+                    </div>
+                    <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-camera text-orange-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Vehicles Section -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-lg font-semibold text-gray-900">Vehículos Recientes</h2>
+                <button onclick="showPage('vehicles')" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                    Ver Todos los Vehículos
+                </button>
+            </div>
+            <div class="p-6">
+                <div id="recent-vehicles-content">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
+                <div class="space-y-3">
+                    <button onclick="openVehicleModal()" class="w-full flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-plus text-blue-600"></i>
+                        <span class="text-gray-700">Agregar Nuevo Vehículo</span>
+                    </button>
+                    <button class="w-full flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-camera text-green-600"></i>
+                        <span class="text-gray-700">Gestionar Fotos</span>
+                    </button>
+                    <button class="w-full flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-cog text-gray-600"></i>
+                        <span class="text-gray-700">Configuración del Sistema</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- System Status -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">System Status</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-700">API Status</span>
+                        <span class="text-green-600 font-medium">Healthy</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-700">Database</span>
+                        <span class="text-green-600 font-medium">Connected</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-700">Photo Storage</span>
+                        <span class="text-blue-600 font-medium">Ready</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Vehicles Page -->
+        <div id="vehicles-page" class="hidden">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Vehículos</h1>
+                <p class="text-gray-600">Gestiona todos tus vehículos</p>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900">Lista de Vehículos</h2>
+                    <button onclick="openVehicleModal()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+                        <i class="fas fa-plus mr-2"></i>Agregar Vehículo
+                    </button>
+                </div>
+                
+                <div id="vehicles-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Vehicles will be loaded here -->
+                    <div class="text-center py-12">
+                        <i class="fas fa-car text-6xl text-gray-300 mb-4"></i>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">No hay vehículos</h3>
+                        <p class="text-gray-600 mb-6">Agrega tu primer vehículo para comenzar</p>
+                        <button onclick="openVehicleModal()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg">
+                            Agregar Primer Vehículo
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Navigation Arrows -->
+                <div id="vehicles-navigation" class="hidden mt-8 flex justify-center items-center space-x-4">
+                    <button id="prev-page" onclick="previousPage()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-chevron-left mr-2"></i>Anterior
+                    </button>
+                    
+                    <div class="flex items-center space-x-2">
+                        <span id="page-info" class="text-gray-600 font-medium">Página 1 de 1</span>
+                        <div id="page-numbers" class="flex space-x-1">
+                            <!-- Page numbers will be generated here -->
+                        </div>
+                    </div>
+                    
+                    <button id="next-page" onclick="nextPage()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                        Siguiente<i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Photos Page -->
+        <div id="photos-page" class="hidden">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Fotos</h1>
+                <p class="text-gray-600">Gestiona las fotos de tus vehículos</p>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900">Fotos por Vehículo</h2>
+                    <button onclick="refreshPhotos()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                        <i class="fas fa-refresh mr-2"></i>Actualizar
+                    </button>
+                </div>
+                
+                <div id="photos-container">
+                    <div class="text-center py-12">
+                        <i class="fas fa-camera text-6xl text-gray-300 mb-4"></i>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Cargando fotos...</h3>
+                        <p class="text-gray-600">Obteniendo fotos de Google Drive</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Facebook Page -->
+        <div id="facebook-page" class="hidden">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Facebook</h1>
+                <p class="text-gray-600">Integración con Facebook Marketplace</p>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Facebook Integration</h2>
+                    <div class="flex space-x-3">
+                        <button onclick="testFacebookConnection()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                            <i class="fas fa-wifi mr-2"></i>Test Connection
+                        </button>
+                        <button onclick="refreshFacebookStatus()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                            <i class="fas fa-sync mr-2"></i>Refresh Status
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Facebook Status -->
+                <div id="facebook-status" class="mb-6">
+                    <div class="bg-gray-100 rounded-lg p-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                            <span class="text-gray-600">Loading Facebook status...</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Facebook Accounts -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Facebook Accounts</h3>
+                    <div id="facebook-accounts" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Accounts will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Post Vehicle to Facebook -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Post Vehicle to Facebook</h3>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-center space-x-4">
+                            <select id="facebook-account-select" class="border border-gray-300 rounded px-3 py-2">
+                                <option value="0">Select Account</option>
+                            </select>
+                            <select id="facebook-vehicle-select" class="border border-gray-300 rounded px-3 py-2">
+                                <option value="">Select Vehicle</option>
+                            </select>
+                            <button onclick="postVehicleToFacebook()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                                <i class="fas fa-share mr-2"></i>Post to Facebook
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Automation Settings -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Automation Settings</h3>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="auto-repost" class="rounded">
+                                <label for="auto-repost" class="text-sm font-medium text-gray-700">Auto Repost</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="remove-sold" class="rounded">
+                                <label for="remove-sold" class="text-sm font-medium text-gray-700">Remove Sold Vehicles</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="settings-page" class="hidden">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Configuración</h1>
+                <p class="text-gray-600">Configuración del sistema</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Configuración General</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de la Empresa</label>
+                            <input type="text" value="Autosell.mx" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email de Contacto</label>
+                            <input type="email" placeholder="contacto@autosell.mx" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Estado del Sistema</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-700">API Status</span>
+                            <span class="text-green-600 font-medium">Healthy</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-700">Database</span>
+                            <span class="text-green-600 font-medium">Connected</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-700">Photo Storage</span>
+                            <span class="text-blue-600 font-medium">Ready</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Vehicle Modal -->
+    <div id="vehicleModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-900">Agregar Nuevo Vehículo</h2>
+                <button onclick="closeVehicleModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form id="vehicleForm" class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Marca</label>
+                        <input type="text" name="marca" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Modelo</label>
+                        <input type="text" name="modelo" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Año</label>
+                        <input type="number" name="año" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Color</label>
+                        <input type="text" name="color" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Precio</label>
+                        <input type="number" name="precio" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Kilómetros</label>
+                        <input type="number" name="kilometros" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                    <textarea name="descripcion" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Fotos del Vehículo</label>
+                    <div id="photoDropZone" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors" 
+                         ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragenter="handleDragEnter(event)" ondragleave="handleDragLeave(event)">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-600 mb-2">Arrastra y suelta las fotos aquí o haz clic para seleccionar</p>
+                        <input type="file" name="fotos" multiple accept="image/*" class="hidden" id="photoInput" onchange="handleFileSelect(event)">
+                        <button type="button" onclick="document.getElementById('photoInput').click()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                            Seleccionar Fotos
+                        </button>
+                        <div id="photoPreview" class="mt-4 grid grid-cols-2 gap-2"></div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeVehicleModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition-colors">
+                        Agregar Vehículo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Modal Functions
+        function openVehicleModal() {
+            document.getElementById('vehicleModal').classList.remove('hidden');
+            document.getElementById('vehicleModal').classList.add('flex');
+        }
+
+        function closeVehicleModal() {
+            document.getElementById('vehicleModal').classList.add('hidden');
+            document.getElementById('vehicleModal').classList.remove('flex');
+            document.getElementById('vehicleForm').reset();
+        }
+
+        // Form Submission
+        document.getElementById('vehicleForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const vehicleData = {
+                marca: formData.get('marca'),
+                modelo: formData.get('modelo'),
+                año: parseInt(formData.get('año')),
+                color: formData.get('color'),
+                precio: parseFloat(formData.get('precio')),
+                kilometros: parseInt(formData.get('kilometros')),
+                descripcion: formData.get('descripcion'),
+                estatus: 'disponible'
+            };
+
+            try {
+                // First, create the vehicle
+                const vehicleResponse = await fetch('http://localhost:8001/vehicles/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(vehicleData)
+                });
+
+                if (vehicleResponse.ok) {
+                    const result = await vehicleResponse.json();
+                    const vehicleId = result.id || result.vehicles[0].id;
+                    
+                    // Handle photo uploads if any
+                    const photoFiles = formData.getAll('fotos');
+                    if (photoFiles.length > 0) {
+                        for (const photoFile of photoFiles) {
+                            if (photoFile.size > 0) {
+                                const photoFormData = new FormData();
+                                photoFormData.append('files', photoFile);
+                                
+                                try {
+                                    const photoResponse = await fetch(`http://localhost:8001/photos/upload/${vehicleId}`, {
+                                        method: 'POST',
+                                        body: photoFormData
+                                    });
+                                    
+                                    if (!photoResponse.ok) {
+                                        console.warn('Photo upload failed:', await photoResponse.text());
+                                    }
+                                } catch (photoError) {
+                                    console.warn('Photo upload error:', photoError);
+                                }
+                            }
+                        }
+                    }
+                    
+                    alert('Vehículo agregado exitosamente!');
+                    closeVehicleModal();
+                    // Refresh the page to show updated data
+                    location.reload();
+                } else {
+                    const error = await vehicleResponse.text();
+                    alert('Error al crear el vehículo: ' + error);
+                }
+            } catch (error) {
+                alert('Error de conexión: ' + error.message);
+            }
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('vehicleModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeVehicleModal();
+            }
+        });
+
+        // Load dashboard data on page load
+        async function loadDashboardData() {
+            try {
+                console.log('🔄 Loading dashboard data...');
+                // Add cache-busting parameter to force fresh data
+                const timestamp = new Date().getTime();
+                const response = await fetch(`http://localhost:8001/dashboard/stats?t=${timestamp}`, {
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('📊 Dashboard stats received:', data);
+                    updateDashboardStats(data);
+                } else {
+                    console.log('❌ Dashboard stats endpoint failed, trying vehicles endpoint...');
+                    // Fallback to vehicles endpoint
+                    const vehiclesResponse = await fetch(`http://localhost:8001/vehicles?t=${timestamp}`, {
+                        headers: {
+                            'Cache-Control': 'no-cache',
+                            'Pragma': 'no-cache'
+                        }
+                    });
+                    if (vehiclesResponse.ok) {
+                        const vehiclesData = await vehiclesResponse.json();
+                        updateDashboardStats(vehiclesData);
+                    }
+                }
+            } catch (error) {
+                console.log('❌ Backend not available, using placeholder data:', error);
+            }
+        }
+
+        function updateDashboardStats(data) {
+            console.log('📊 Dashboard data received:', data);
+            
+            // Handle both dashboard stats format and vehicles format
+            let totalVehicles, availableVehicles, totalValue, totalPhotos;
+            
+            if (data.total_vehicles !== undefined) {
+                // Dashboard stats format
+                totalVehicles = data.total_vehicles || 0;
+                availableVehicles = data.available_vehicles || 0;
+                totalValue = data.total_value || 0;
+                totalPhotos = data.total_photos || 0;
+            } else {
+                // Vehicles format (fallback)
+                totalVehicles = data.total || 0;
+                availableVehicles = data.vehicles ? data.vehicles.filter(v => v.estatus === 'disponible' || v.estatus === 'DISPONIBLE').length : 0;
+                totalValue = data.vehicles ? data.vehicles.reduce((sum, v) => sum + (v.precio || 0), 0) : 0;
+                totalPhotos = data.vehicles ? data.vehicles.reduce((sum, v) => sum + (v.photo_count || 0), 0) : 0;
+            }
+
+            console.log('📈 Calculated stats:', {
+                totalVehicles,
+                availableVehicles, 
+                totalValue,
+                totalPhotos
+            });
+
+            // Update the dashboard cards with more specific selectors
+            const cards = document.querySelectorAll('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4 .text-2xl');
+            console.log('🔍 Found cards:', cards.length);
+            
+            if (cards.length >= 4) {
+                cards[0].textContent = totalVehicles;
+                cards[1].textContent = availableVehicles;
+                cards[2].textContent = '$' + totalValue.toLocaleString();
+                cards[3].textContent = totalPhotos;
+                console.log('✅ Dashboard stats updated successfully');
+                console.log('📊 Updated values:', {
+                    totalVehicles,
+                    availableVehicles,
+                    totalValue: '$' + totalValue.toLocaleString(),
+                    totalPhotos
+                });
+                
+                // Load recent vehicles
+                loadRecentVehicles();
+            } else {
+                console.log('❌ Could not find dashboard cards to update');
+                console.log('🔍 Available elements:', document.querySelectorAll('.text-2xl').length);
+                console.log('🔍 Grid elements:', document.querySelectorAll('.grid').length);
+            }
+
+            // Update the Recent Vehicles section
+            updateRecentVehicles(data.vehicles || data.recent_vehicles || []);
+        }
+
+        function updateRecentVehicles(vehicles) {
+            const recentVehiclesContainer = document.querySelector('.bg-white.rounded-lg.shadow-sm.border.border-gray-200.mb-8 .p-6');
+            
+            if (vehicles.length === 0) {
+                recentVehiclesContainer.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="w-16 h-16 mx-auto mb-4 text-gray-300">
+                            <i class="fas fa-car text-6xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">No hay vehículos aún</h3>
+                        <p class="text-gray-600 mb-6">Comienza agregando tu primer vehículo al sistema.</p>
+                        <button onclick="openVehicleModal()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition-colors">
+                            Agregar Primer Vehículo
+                        </button>
+                    </div>
+                `;
+            } else {
+                // Show recent vehicles (limit to 3)
+                const recentVehicles = vehicles.slice(0, 3);
+                recentVehiclesContainer.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        ${recentVehicles.map(vehicle => `
+                            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-car text-gray-500"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="text-sm font-medium text-gray-900 truncate">${vehicle.marca} ${vehicle.modelo}</h4>
+                                        <p class="text-sm text-gray-500">${vehicle.año}</p>
+                                        <p class="text-sm font-medium text-green-600">$${vehicle.precio ? vehicle.precio.toLocaleString() : '0'}</p>
+                                    </div>
+                                </div>
+                                <div class="mt-3 flex justify-between items-center">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${vehicle.estatus === 'disponible' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                        ${vehicle.estatus}
+                                    </span>
+                                    <button onclick="showPage('vehicles')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                        Ver detalles
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="mt-4 text-center">
+                        <button onclick="showPage('vehicles')" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                            Ver Todos los Vehículos
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Page Navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('[id$="-page"]').forEach(page => {
+                page.classList.add('hidden');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId + '-page').classList.remove('hidden');
+            
+            // Update navigation styling
+            document.querySelectorAll('nav a').forEach(link => {
+                link.classList.remove('text-blue-600', 'font-medium', 'border-b-2', 'border-blue-600', 'pb-1');
+                link.classList.add('text-gray-600');
+            });
+            
+            // Highlight current page
+            event.target.classList.remove('text-gray-600');
+            event.target.classList.add('text-blue-600', 'font-medium', 'border-b-2', 'border-blue-600', 'pb-1');
+            
+            // Load page-specific data
+            if (pageId === 'vehicles') {
+                loadVehiclesList();
+            } else if (pageId === 'photos') {
+                loadPhotosPage();
+            } else if (pageId === 'facebook') {
+                loadFacebookData();
+            }
+        }
+
+        async function loadRecentVehicles() {
+            try {
+                console.log('🔄 Loading recent vehicles...');
+                const timestamp = new Date().getTime();
+                const response = await fetch(`http://localhost:8001/vehicles?limit=6&t=${timestamp}`, {
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    updateRecentVehicles(data.vehicles || []);
+                } else {
+                    console.log('❌ Error loading recent vehicles');
+                    updateRecentVehicles([]);
+                }
+            } catch (error) {
+                console.error('❌ Error loading recent vehicles:', error);
+                updateRecentVehicles([]);
+            }
+        }
+
+        function updateRecentVehicles(vehicles) {
+            const container = document.getElementById('recent-vehicles-content');
+            if (!container) return;
+            
+            if (vehicles.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="w-16 h-16 mx-auto mb-4 text-gray-300">
+                            <i class="fas fa-car text-6xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">No hay vehículos aún</h3>
+                        <p class="text-gray-600 mb-6">Comienza agregando tu primer vehículo al sistema.</p>
+                        <button onclick="openVehicleModal()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition-colors">
+                            Agregar Primer Vehículo
+                        </button>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        ${vehicles.slice(0, 6).map(vehicle => `
+                            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-car text-gray-600"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="text-sm font-medium text-gray-900 truncate">${vehicle.marca} ${vehicle.modelo}</h4>
+                                        <p class="text-sm text-gray-500">${vehicle.año} • ${vehicle.color}</p>
+                                        <p class="text-sm font-medium text-green-600">$${vehicle.precio?.toLocaleString() || 'N/A'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        // Load vehicles list
+        async function loadVehiclesList() {
+            try {
+                console.log('🔄 Loading vehicles list...');
+                const response = await fetch('http://localhost:8001/vehicles?limit=200');
+                console.log('📡 Response status:', response.status);
+                console.log('📡 Response headers:', response.headers);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('📊 Vehicles data received:', data);
+                    console.log('📊 Number of vehicles:', data.vehicles?.length || 0);
+                    console.log('📊 Total vehicles:', data.total || 0);
+                    displayVehicles(data.vehicles || []);
+                } else {
+                    console.log('❌ Backend not available, showing placeholder. Status:', response.status);
+                    const errorText = await response.text();
+                    console.log('❌ Error response:', errorText);
+                }
+            } catch (error) {
+                console.log('❌ Backend not available, showing placeholder:', error);
+                console.log('❌ Error details:', error.message);
+            }
+        }
+
+        // Display vehicles
+        function displayVehicles(vehicles) {
+            console.log('🎨 Displaying vehicles:', vehicles);
+            console.log('🎨 Vehicles length:', vehicles?.length || 0);
+            console.log('🎨 Vehicles type:', typeof vehicles);
+            console.log('🎨 Is array:', Array.isArray(vehicles));
+            
+            const vehiclesList = document.getElementById('vehicles-list');
+            const navigation = document.getElementById('vehicles-navigation');
+            
+            console.log('🎨 Vehicles list element:', vehiclesList);
+            console.log('🎨 Navigation element:', navigation);
+            
+            // Store vehicles globally for pagination
+            window.currentVehicles = vehicles;
+            
+            if (!vehicles || vehicles.length === 0) {
+                console.log('🎨 No vehicles to display, showing empty state');
+                vehiclesList.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-car text-6xl text-gray-300 mb-4"></i>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">No hay vehículos</h3>
+                        <p class="text-gray-600 mb-6">Agrega tu primer vehículo para comenzar</p>
+                        <button onclick="openVehicleModal()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg">
+                            Agregar Primer Vehículo
+                        </button>
+                    </div>
+                `;
+                navigation.classList.add('hidden');
+            } else {
+                console.log('🎨 Vehicles found, calculating pagination');
+                console.log('🎨 Total vehicles:', vehicles.length);
+                console.log('🎨 Vehicles per page:', vehiclesPerPage);
+                
+                // Calculate pagination
+                totalPages = Math.ceil(vehicles.length / vehiclesPerPage);
+                const startIndex = (currentPage - 1) * vehiclesPerPage;
+                const endIndex = startIndex + vehiclesPerPage;
+                const vehiclesToShow = vehicles.slice(startIndex, endIndex);
+                
+                console.log('🎨 Total pages:', totalPages);
+                console.log('🎨 Start index:', startIndex);
+                console.log('🎨 End index:', endIndex);
+                console.log('🎨 Vehicles to show:', vehiclesToShow.length);
+                
+                vehiclesList.innerHTML = vehiclesToShow.map(vehicle => `
+                    <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="aspect-w-16 aspect-h-9 bg-gray-200 rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
+                            <img id="vehicle-photo-${vehicle.id}" 
+                                 src="http://localhost:8001/vehicles/${vehicle.id}/primary-photo" 
+                                 alt="${vehicle.marca} ${vehicle.modelo}"
+                                 class="w-full h-full object-cover"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="absolute inset-0 flex items-center justify-center bg-gray-100" style="display: none;">
+                                <i class="fas fa-car text-4xl text-gray-400"></i>
+                            </div>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2">${vehicle.marca} ${vehicle.modelo}</h3>
+                        <p class="text-sm text-gray-600 mb-2">Año: ${vehicle.año}</p>
+                        <p class="text-sm text-gray-600 mb-2">Color: ${vehicle.color || 'No especificado'}</p>
+                        <p class="text-sm text-gray-600 mb-2">Kilometraje: ${vehicle.kilometraje || 'No especificado'}</p>
+                        <p class="text-sm text-gray-600 mb-2">Ubicación: ${vehicle.ubicacion || 'No especificada'}</p>
+                        <p class="text-lg font-bold text-green-600">$${vehicle.precio?.toLocaleString() || '0'}</p>
+                        ${vehicle.descripcion ? `<p class="text-sm text-gray-600 mt-2">${vehicle.descripcion}</p>` : ''}
+                        <div class="mt-3 flex space-x-2">
+                            <button onclick="viewVehicleDetails(${vehicle.id})" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-sm transition-colors">
+                                <i class="fas fa-eye mr-1"></i>Detalles
+                            </button>
+                            <button onclick="editVehicle(${vehicle.id})" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm transition-colors">
+                                <i class="fas fa-edit mr-1"></i>Editar
+                            </button>
+                            <button onclick="deleteVehicle(${vehicle.id})" class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition-colors">
+                                <i class="fas fa-trash mr-1"></i>Eliminar
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+                
+                // Update navigation
+                updateNavigation();
+                navigation.classList.remove('hidden');
+                console.log('🎨 Navigation updated and shown');
+                console.log('🎨 Navigation element classes:', navigation.className);
+                console.log('🎨 Navigation element visible:', navigation.offsetParent !== null);
+            }
+            console.log('🎨 Display vehicles function completed');
+        }
+        
+        function updateNavigation() {
+            console.log('🔄 Updating navigation - Current page:', currentPage, 'Total pages:', totalPages);
+            
+            const prevButton = document.getElementById('prev-page');
+            const nextButton = document.getElementById('next-page');
+            const pageInfo = document.getElementById('page-info');
+            const pageNumbers = document.getElementById('page-numbers');
+            
+            if (!prevButton || !nextButton || !pageInfo) {
+                console.error('❌ Navigation elements not found');
+                return;
+            }
+            
+            prevButton.disabled = currentPage === 1;
+            nextButton.disabled = currentPage === totalPages;
+            pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
+            
+            // Generate page numbers
+            if (pageNumbers) {
+                pageNumbers.innerHTML = '';
+                const maxVisiblePages = 5;
+                let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+                let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+                
+                if (endPage - startPage + 1 < maxVisiblePages) {
+                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                }
+                
+                for (let i = startPage; i <= endPage; i++) {
+                    const pageButton = document.createElement('button');
+                    pageButton.textContent = i;
+                    pageButton.className = `px-3 py-1 rounded text-sm ${
+                        i === currentPage 
+                            ? 'bg-blue-600 text-white' 
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`;
+                    pageButton.onclick = () => goToPage(i);
+                    pageNumbers.appendChild(pageButton);
+                }
+            }
+            
+            console.log('✅ Navigation updated successfully');
+        }
+        
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                displayVehicles(window.currentVehicles);
+            }
+        }
+        
+        function nextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayVehicles(window.currentVehicles);
+            }
+        }
+        
+        function goToPage(page) {
+            if (page >= 1 && page <= totalPages && page !== currentPage) {
+                currentPage = page;
+                displayVehicles(window.currentVehicles);
+            }
+        }
+
+        // Pagination variables
+        let currentPage = 1;
+        let totalPages = 1;
+        let vehiclesPerPage = 9; // 3x3 grid
+        
+        function viewVehicleDetails(vehicleId) {
+            // Find the vehicle in the current vehicles array
+            const vehicle = window.currentVehicles?.find(v => v.id === vehicleId);
+            if (!vehicle) {
+                alert('Vehículo no encontrado');
+                return;
+            }
+            
+            // Create a detailed view modal
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-gray-900">Detalles del Vehículo</h2>
+                        <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Información General</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Marca:</span>
+                                    <span class="font-medium">${vehicle.marca}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Modelo:</span>
+                                    <span class="font-medium">${vehicle.modelo}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Año:</span>
+                                    <span class="font-medium">${vehicle.año}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Color:</span>
+                                    <span class="font-medium">${vehicle.color || 'No especificado'}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Kilometraje:</span>
+                                    <span class="font-medium">${vehicle.kilometraje || 'No especificado'}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Ubicación:</span>
+                                    <span class="font-medium">${vehicle.ubicacion || 'No especificada'}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Estatus:</span>
+                                    <span class="font-medium text-green-600">${vehicle.estatus || 'Disponible'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Precio y Descripción</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Precio:</span>
+                                    <span class="font-bold text-green-600 text-xl">$${vehicle.precio?.toLocaleString() || '0'}</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600 block mb-2">Descripción:</span>
+                                    <p class="text-gray-800 bg-gray-50 p-3 rounded">${vehicle.descripcion || 'Sin descripción disponible'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button onclick="editVehicle(${vehicle.id}); this.closest('.fixed').remove();" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                            <i class="fas fa-edit mr-2"></i>Editar
+                        </button>
+                        <button onclick="this.closest('.fixed').remove()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">
+                            Cerrar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        function editVehicle(vehicleId) {
+            // Find the vehicle in the current vehicles array
+            const vehicle = window.currentVehicles?.find(v => v.id === vehicleId);
+            if (!vehicle) {
+                alert('Vehículo no encontrado');
+                return;
+            }
+            
+            // Create an edit vehicle modal
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-gray-900">Editar Vehículo</h2>
+                        <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    
+                    <form id="edit-vehicle-form" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Marca</label>
+                                <input type="text" id="edit-marca" value="${vehicle.marca}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Modelo</label>
+                                <input type="text" id="edit-modelo" value="${vehicle.modelo}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Año</label>
+                                <input type="number" id="edit-año" value="${vehicle.año}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Color</label>
+                                <select id="edit-color" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="BLANCO" ${vehicle.color === 'BLANCO' ? 'selected' : ''}>BLANCO</option>
+                                    <option value="NEGRO" ${vehicle.color === 'NEGRO' ? 'selected' : ''}>NEGRO</option>
+                                    <option value="GRIS" ${vehicle.color === 'GRIS' ? 'selected' : ''}>GRIS</option>
+                                    <option value="PLATA" ${vehicle.color === 'PLATA' ? 'selected' : ''}>PLATA</option>
+                                    <option value="AZUL" ${vehicle.color === 'AZUL' ? 'selected' : ''}>AZUL</option>
+                                    <option value="ROJO" ${vehicle.color === 'ROJO' ? 'selected' : ''}>ROJO</option>
+                                    <option value="VERDE" ${vehicle.color === 'VERDE' ? 'selected' : ''}>VERDE</option>
+                                    <option value="AMARILLO" ${vehicle.color === 'AMARILLO' ? 'selected' : ''}>AMARILLO</option>
+                                    <option value="MARRÓN" ${vehicle.color === 'MARRÓN' ? 'selected' : ''}>MARRÓN</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Kilometraje</label>
+                                <input type="text" id="edit-kilometraje" value="${vehicle.kilometraje}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Precio</label>
+                                <input type="number" id="edit-precio" value="${vehicle.precio}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Ubicación</label>
+                                <input type="text" id="edit-ubicacion" value="${vehicle.ubicacion}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Estatus</label>
+                                <select id="edit-estatus" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="disponible" ${vehicle.estatus === 'disponible' ? 'selected' : ''}>Disponible</option>
+                                    <option value="vendido" ${vehicle.estatus === 'vendido' ? 'selected' : ''}>Vendido</option>
+                                    <option value="reservado" ${vehicle.estatus === 'reservado' ? 'selected' : ''}>Reservado</option>
+                                    <option value="no disponible" ${vehicle.estatus === 'no disponible' ? 'selected' : ''}>No Disponible</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                            <textarea id="edit-descripcion" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">${vehicle.descripcion || ''}</textarea>
+                        </div>
+                        
+                        <!-- Photo Management Section -->
+                        <div class="border-t pt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Fotos del Vehículo</label>
+                            
+                            <!-- Existing Photos Display -->
+                            <div id="existing-photos" class="mb-4">
+                                <div class="text-sm text-gray-600 mb-2">Fotos actuales:</div>
+                                <div id="current-photos-grid" class="grid grid-cols-3 gap-2 mb-3">
+                                    <!-- Photos will be loaded here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Photo Upload Area -->
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors" 
+                                 id="photo-drop-zone" 
+                                 ondrop="handlePhotoDrop(event)" 
+                                 ondragover="handleDragOver(event)" 
+                                 ondragenter="handleDragEnter(event)" 
+                                 ondragleave="handleDragLeave(event)">
+                                <div class="space-y-2">
+                                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400"></i>
+                                    <div class="text-sm text-gray-600">
+                                        <span class="font-medium text-blue-600">Haz clic para seleccionar</span> o arrastra fotos aquí
+                                    </div>
+                                    <div class="text-xs text-gray-500">PNG, JPG, JPEG hasta 10MB</div>
+                                </div>
+                                <input type="file" id="photo-upload-input" multiple accept="image/*" class="hidden" onchange="handlePhotoSelect(event)">
+                            </div>
+                            
+                            <!-- Upload Progress -->
+                            <div id="upload-progress" class="hidden mt-3">
+                                <div class="bg-gray-200 rounded-full h-2">
+                                    <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                                </div>
+                                <div id="upload-status" class="text-sm text-gray-600 mt-1"></div>
+                            </div>
+                            
+                            <!-- Selected Photos Preview -->
+                            <div id="selected-photos-preview" class="hidden mt-4">
+                                <div class="text-sm font-medium text-gray-700 mb-2">Fotos seleccionadas:</div>
+                                <div id="preview-grid" class="grid grid-cols-4 gap-2"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center pt-4">
+                            <button type="button" onclick="uploadSelectedPhotos(${vehicleId})" 
+                                    id="upload-photos-btn" 
+                                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed">
+                                <i class="fas fa-upload mr-2"></i>Subir Fotos
+                            </button>
+                            
+                            <div class="flex space-x-3">
+                                <button type="button" onclick="this.closest('.fixed').remove()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">
+                                    Cancelar
+                                </button>
+                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                                    <i class="fas fa-save mr-2"></i>Guardar Cambios
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Load existing photos for this vehicle
+            loadExistingPhotos(vehicleId);
+            
+            // Make drop zone clickable
+            document.getElementById('photo-drop-zone').addEventListener('click', () => {
+                document.getElementById('photo-upload-input').click();
+            });
+            
+            // Add vehicle ID to modal for photo operations
+            modal.setAttribute('data-vehicle-id', vehicleId);
+            
+            // Update upload button state
+            updateUploadButtonState();
+            
+            // Handle form submission
+            document.getElementById('edit-vehicle-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    marca: document.getElementById('edit-marca').value,
+                    modelo: document.getElementById('edit-modelo').value,
+                    año: parseInt(document.getElementById('edit-año').value),
+                    color: document.getElementById('edit-color').value,
+                    kilometraje: document.getElementById('edit-kilometraje').value,
+                    precio: parseInt(document.getElementById('edit-precio').value),
+                    ubicacion: document.getElementById('edit-ubicacion').value,
+                    estatus: document.getElementById('edit-estatus').value,
+                    descripcion: document.getElementById('edit-descripcion').value
+                };
+                
+                try {
+                    const response = await fetch(`http://localhost:8001/vehicles/${vehicleId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    if (response.ok) {
+                        alert('Vehículo actualizado exitosamente');
+                        modal.remove();
+                        // Refresh the vehicles list
+                        await loadVehiclesList();
+                        await loadDashboardData();
+                    } else {
+                        const error = await response.text();
+                        alert('Error al actualizar vehículo: ' + error);
+                    }
+                } catch (error) {
+                    alert('Error de conexión: ' + error.message);
+                }
+            });
+        }
+
+        // Photo handling functions for edit modal
+        async function loadExistingPhotos(vehicleId) {
+            try {
+                const response = await fetch(`http://localhost:8001/photos/vehicle/${vehicleId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const photosGrid = document.getElementById('current-photos-grid');
+                    photosGrid.innerHTML = '';
+                    
+                    if (data.photos && data.photos.length > 0) {
+                        data.photos.forEach(photo => {
+                            const photoDiv = document.createElement('div');
+                            photoDiv.className = 'relative group';
+                            photoDiv.innerHTML = `
+                                <img src="http://localhost:8001/photos/image/${photo.id}" 
+                                     alt="Vehicle photo" 
+                                     class="w-full h-20 object-cover rounded border">
+                                <button onclick="deletePhoto(${photo.id})" 
+                                        class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            `;
+                            photosGrid.appendChild(photoDiv);
+                        });
+                    } else {
+                        photosGrid.innerHTML = '<div class="text-gray-500 text-sm">No hay fotos disponibles</div>';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading existing photos:', error);
+            }
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('border-blue-400', 'bg-blue-50');
+        }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('border-blue-400', 'bg-blue-50');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('border-blue-400', 'bg-blue-50');
+        }
+
+        function handlePhotoDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('border-blue-400', 'bg-blue-50');
+            
+            const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+            if (files.length > 0) {
+                handlePhotoFiles(files);
+            }
+        }
+
+        function handlePhotoSelect(e) {
+            const files = Array.from(e.target.files);
+            if (files.length > 0) {
+                handlePhotoFiles(files);
+            }
+        }
+
+        function handlePhotoFiles(files) {
+            const previewGrid = document.getElementById('preview-grid');
+            const previewContainer = document.getElementById('selected-photos-preview');
+            
+            previewGrid.innerHTML = '';
+            previewContainer.classList.remove('hidden');
+            
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const photoDiv = document.createElement('div');
+                    photoDiv.className = 'relative group';
+                    photoDiv.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview" class="w-full h-20 object-cover rounded border">
+                        <button onclick="removeSelectedPhoto(this)" 
+                                class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    photoDiv.dataset.fileIndex = index;
+                    previewGrid.appendChild(photoDiv);
+                };
+                reader.readAsDataURL(file);
+            });
+            
+            // Store files for upload
+            window.selectedFiles = files;
+            
+            // Update upload button state
+            updateUploadButtonState();
+        }
+
+        function removeSelectedPhoto(button) {
+            const photoDiv = button.closest('.relative');
+            const fileIndex = parseInt(photoDiv.dataset.fileIndex);
+            
+            // Remove from files array
+            if (window.selectedFiles) {
+                window.selectedFiles.splice(fileIndex, 1);
+            }
+            
+            photoDiv.remove();
+            
+            // Hide preview if no photos left
+            const previewGrid = document.getElementById('preview-grid');
+            if (previewGrid.children.length === 0) {
+                document.getElementById('selected-photos-preview').classList.add('hidden');
+            }
+            
+            // Update upload button state
+            updateUploadButtonState();
+        }
+
+        async function uploadSelectedPhotos(vehicleId) {
+            if (!window.selectedFiles || window.selectedFiles.length === 0) {
+                return;
+            }
+            
+            const progressBar = document.getElementById('progress-bar');
+            const uploadStatus = document.getElementById('upload-status');
+            const uploadProgress = document.getElementById('upload-progress');
+            
+            uploadProgress.classList.remove('hidden');
+            uploadStatus.textContent = 'Subiendo fotos...';
+            
+            try {
+                const formData = new FormData();
+                window.selectedFiles.forEach(file => {
+                    formData.append('files', file);
+                });
+                formData.append('description', 'Fotos subidas desde edición de vehículo');
+                
+                const response = await fetch(`http://localhost:8001/photos/upload/${vehicleId}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    progressBar.style.width = '100%';
+                    uploadStatus.textContent = `✅ ${result.photos ? result.photos.length : 0} fotos subidas exitosamente`;
+                    
+                    // Clear selected files and preview
+                    window.selectedFiles = [];
+                    document.getElementById('selected-photos-preview').classList.add('hidden');
+                    document.getElementById('preview-grid').innerHTML = '';
+                    
+                    // Reload existing photos
+                    await loadExistingPhotos(vehicleId);
+                } else {
+                    const error = await response.text();
+                    uploadStatus.textContent = `❌ Error: ${error}`;
+                }
+            } catch (error) {
+                uploadStatus.textContent = `❌ Error de conexión: ${error.message}`;
+            }
+        }
+
+        function updateUploadButtonState() {
+            const uploadBtn = document.getElementById('upload-photos-btn');
+            if (uploadBtn) {
+                const hasSelectedFiles = window.selectedFiles && window.selectedFiles.length > 0;
+                uploadBtn.disabled = !hasSelectedFiles;
+                if (hasSelectedFiles) {
+                    uploadBtn.textContent = `Subir ${window.selectedFiles.length} Foto(s)`;
+                } else {
+                    uploadBtn.innerHTML = '<i class="fas fa-upload mr-2"></i>Subir Fotos';
+                }
+            }
+        }
+
+        async function deletePhoto(photoId) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta foto?')) {
+                try {
+                    const response = await fetch(`http://localhost:8001/photos/${photoId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        // Reload existing photos
+                        const modal = document.querySelector('.fixed[data-vehicle-id]');
+                        const vehicleId = modal?.getAttribute('data-vehicle-id');
+                        if (vehicleId) {
+                            await loadExistingPhotos(vehicleId);
+                        }
+                    } else {
+                        alert('Error al eliminar la foto');
+                    }
+                } catch (error) {
+                    alert('Error de conexión al eliminar la foto');
+                }
+            }
+        }
+
+        async function deleteVehicle(vehicleId) {
+            if (confirm('¿Estás seguro de que quieres eliminar este vehículo? Esta acción no se puede deshacer.')) {
+                try {
+                    console.log(`🗑️ Deleting vehicle ${vehicleId}`);
+                    const response = await fetch(`http://localhost:8001/vehicles/${vehicleId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        console.log('✅ Delete response:', result);
+                        alert('Vehículo eliminado exitosamente');
+                        
+                        // Force refresh all data
+                        await loadVehiclesList();
+                        await loadDashboardData();
+                        
+                        // If we're on the photos page, refresh it too
+                        if (document.getElementById('photos-page') && !document.getElementById('photos-page').classList.contains('hidden')) {
+                            await loadPhotosPage();
+                        }
+                        
+                        console.log('🔄 All data refreshed after deletion');
+                    } else {
+                        const error = await response.text();
+                        console.error('❌ Delete failed:', error);
+                        alert('Error al eliminar el vehículo: ' + error);
+                    }
+                } catch (error) {
+                    console.error('❌ Delete error:', error);
+                    alert('Error de conexión: ' + error.message);
+                }
+            }
+        }
+
+        // Photo Management Functions
+        async function loadPhotosPage() {
+            try {
+                const response = await fetch('http://localhost:8001/vehicles');
+                if (response.ok) {
+                    const data = await response.json();
+                    displayPhotosByVehicle(data.vehicles || []);
+                } else {
+                    displayPhotosByVehicle([]);
+                }
+            } catch (error) {
+                console.error('Error loading photos:', error);
+                displayPhotosByVehicle([]);
+            }
+        }
+
+        function displayPhotosByVehicle(vehicles) {
+            const photosContainer = document.getElementById('photos-container');
+            
+            if (vehicles.length === 0) {
+                photosContainer.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-camera text-6xl text-gray-300 mb-4"></i>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">No hay vehículos</h3>
+                        <p class="text-gray-600 mb-6">Agrega vehículos para ver sus fotos</p>
+                        <button onclick="openVehicleModal()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg">
+                            Agregar Vehículo
+                        </button>
+                    </div>
+                `;
+            } else {
+                photosContainer.innerHTML = vehicles.map(vehicle => `
+                    <div class="mb-8 border border-gray-200 rounded-lg p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900">${vehicle.marca} ${vehicle.modelo} (${vehicle.año})</h3>
+                            <div class="flex space-x-2">
+                                <button onclick="uploadPhotosForVehicle(${vehicle.id})" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm">
+                                    <i class="fas fa-plus mr-1"></i>Agregar Fotos
+                                </button>
+                                <button onclick="viewVehiclePhotos(${vehicle.id})" class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-sm">
+                                    <i class="fas fa-eye mr-1"></i>Ver Fotos
+                                </button>
+                            </div>
+                        </div>
+                        <div id="vehicle-photos-${vehicle.id}" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <!-- Photos will be loaded here -->
+                        </div>
+                    </div>
+                `).join('');
+                
+                // Load photos for each vehicle
+                vehicles.forEach(vehicle => {
+                    loadVehiclePhotosForPage(vehicle.id);
+                });
+            }
+        }
+
+        async function loadVehiclePhotos(vehicleId) {
+            try {
+                const response = await fetch(`http://localhost:8001/photos/vehicle/${vehicleId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    displayVehiclePhotos(vehicleId, data.photos || []);
+                } else {
+                    displayVehiclePhotos(vehicleId, []);
+                }
+            } catch (error) {
+                console.error('Error loading vehicle photos:', error);
+                displayVehiclePhotos(vehicleId, []);
+            }
+        }
+
+        function displayVehiclePhotos(vehicleId, photos) {
+            const container = document.getElementById(`vehicle-photos-${vehicleId}`);
+            
+            if (photos.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-8 text-gray-500">
+                        <i class="fas fa-camera text-2xl mb-2"></i>
+                        <p class="text-sm">No hay fotos para este vehículo</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = photos.map(photo => `
+                    <div class="relative group">
+                        <img src="http://localhost:8001/photos/image/${photo.id}" 
+                             alt="${photo.filename}"
+                             class="w-full h-32 object-cover rounded-lg border border-gray-200">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 rounded-lg flex items-center justify-center">
+                            <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex space-x-2">
+                                <button onclick="deletePhoto(${photo.id}, ${vehicleId})" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                <button onclick="downloadPhoto(${photo.id})" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-600 mt-1 truncate">${photo.filename}</p>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function refreshPhotos() {
+            loadPhotosPage();
+        }
+
+        function uploadPhotosForVehicle(vehicleId) {
+            alert('Función de subir fotos para vehículo específico en desarrollo');
+        }
+
+        async function viewVehiclePhotos(vehicleId) {
+            console.log(`📸 Viewing photos for vehicle ${vehicleId}`);
+            
+            // Create photo viewing modal
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg max-w-6xl w-full mx-4 max-h-[90vh] overflow-hidden">
+                    <div class="flex justify-between items-center p-6 border-b">
+                        <h2 class="text-2xl font-bold text-gray-900">Fotos del Vehículo</h2>
+                        <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div id="photos-loading" class="text-center py-8">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                            <p class="mt-2 text-gray-600">Cargando fotos...</p>
+                        </div>
+                        
+                        <div id="photos-content" class="hidden">
+                            <div id="photos-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                <!-- Photos will be loaded here -->
+                            </div>
+                            
+                            <div id="no-photos" class="hidden text-center py-12">
+                                <i class="fas fa-camera text-6xl text-gray-300 mb-4"></i>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">No hay fotos disponibles</h3>
+                                <p class="text-gray-600 mb-4">Este vehículo no tiene fotos subidas aún.</p>
+                                <button onclick="uploadPhotosForVehicle(${vehicleId})" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                                    <i class="fas fa-plus mr-2"></i>Agregar Fotos
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Load photos for this vehicle
+            await loadVehiclePhotos(vehicleId);
+        }
+
+        async function loadVehiclePhotosForPage(vehicleId) {
+            try {
+                console.log(`📸 Loading photos for vehicle ${vehicleId} on photos page`);
+                const response = await fetch(`http://localhost:8001/photos/vehicle/${vehicleId}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const photosContainer = document.getElementById(`vehicle-photos-${vehicleId}`);
+                    
+                    if (data.photos && data.photos.length > 0) {
+                        console.log(`📸 Found ${data.photos.length} photos for vehicle ${vehicleId}`);
+                        photosContainer.innerHTML = data.photos.map(photo => `
+                            <div class="relative group bg-gray-100 rounded-lg overflow-hidden">
+                                <img src="http://localhost:8001/photos/image/${photo.id}" 
+                                     alt="${photo.filename}" 
+                                     class="w-full h-24 object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
+                                     onclick="openPhotoViewer('${photo.id}', '${photo.filename}')">
+                                
+                                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
+                                    <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex space-x-1">
+                                        <button onclick="setPrimaryPhoto(${photo.id}, ${vehicleId})" 
+                                                class="bg-blue-600 text-white px-2 py-1 rounded text-xs hover:bg-blue-700">
+                                            <i class="fas fa-star"></i>
+                                        </button>
+                                        <button onclick="deletePhotoFromViewer(${photo.id}, ${vehicleId})" 
+                                                class="bg-red-600 text-white px-2 py-1 rounded text-xs hover:bg-red-700">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                ${photo.is_primary ? '<div class="absolute top-1 right-1 bg-yellow-500 text-white px-1 py-0.5 rounded text-xs"><i class="fas fa-star"></i></div>' : ''}
+                            </div>
+                        `).join('');
+                    } else {
+                        console.log(`📸 No photos found for vehicle ${vehicleId}`);
+                        photosContainer.innerHTML = `
+                            <div class="col-span-full text-center py-8 text-gray-500">
+                                <i class="fas fa-camera text-4xl mb-2"></i>
+                                <p class="text-sm">No hay fotos para este vehículo</p>
+                            </div>
+                        `;
+                    }
+                } else {
+                    console.log(`❌ Error loading photos for vehicle ${vehicleId}:`, response.status);
+                    const photosContainer = document.getElementById(`vehicle-photos-${vehicleId}`);
+                    photosContainer.innerHTML = `
+                        <div class="col-span-full text-center py-8 text-gray-500">
+                            <i class="fas fa-exclamation-triangle text-4xl mb-2"></i>
+                            <p class="text-sm">Error al cargar fotos</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error(`❌ Error loading photos for vehicle ${vehicleId}:`, error);
+                const photosContainer = document.getElementById(`vehicle-photos-${vehicleId}`);
+                photosContainer.innerHTML = `
+                    <div class="col-span-full text-center py-8 text-gray-500">
+                        <i class="fas fa-exclamation-triangle text-4xl mb-2"></i>
+                        <p class="text-sm">Error de conexión</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadVehiclePhotos(vehicleId) {
+            try {
+                console.log(`📸 Loading photos for vehicle ${vehicleId}`);
+                const response = await fetch(`http://localhost:8001/photos/vehicle/${vehicleId}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(`📸 Photos data:`, data);
+                    
+                    const loadingDiv = document.getElementById('photos-loading');
+                    const contentDiv = document.getElementById('photos-content');
+                    const noPhotosDiv = document.getElementById('no-photos');
+                    const photosGrid = document.getElementById('photos-grid');
+                    
+                    loadingDiv.classList.add('hidden');
+                    contentDiv.classList.remove('hidden');
+                    
+                    if (data.photos && data.photos.length > 0) {
+                        console.log(`📸 Found ${data.photos.length} photos`);
+                        noPhotosDiv.classList.add('hidden');
+                        
+                        photosGrid.innerHTML = data.photos.map(photo => `
+                            <div class="relative group bg-gray-100 rounded-lg overflow-hidden">
+                                <img src="http://localhost:8001/photos/image/${photo.id}" 
+                                     alt="${photo.filename}" 
+                                     class="w-full h-32 object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
+                                     onclick="openPhotoViewer('${photo.id}', '${photo.filename}')">
+                                
+                                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
+                                    <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex space-x-2">
+                                        <button onclick="setPrimaryPhoto(${photo.id}, ${vehicleId})" 
+                                                class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
+                                            <i class="fas fa-star mr-1"></i>Principal
+                                        </button>
+                                        <button onclick="deletePhotoFromViewer(${photo.id}, ${vehicleId})" 
+                                                class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700">
+                                            <i class="fas fa-trash mr-1"></i>Eliminar
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                ${photo.is_primary ? '<div class="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded text-xs"><i class="fas fa-star"></i> Principal</div>' : ''}
+                            </div>
+                        `).join('');
+                    } else {
+                        console.log('📸 No photos found');
+                        noPhotosDiv.classList.remove('hidden');
+                    }
+                } else {
+                    console.error('❌ Error loading photos:', response.status);
+                    document.getElementById('photos-loading').classList.add('hidden');
+                    document.getElementById('no-photos').classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('❌ Error loading photos:', error);
+                document.getElementById('photos-loading').classList.add('hidden');
+                document.getElementById('no-photos').classList.remove('hidden');
+            }
+        }
+
+        function openPhotoViewer(photoId, filename) {
+            // Create full-screen photo viewer
+            const viewer = document.createElement('div');
+            viewer.className = 'fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50';
+            viewer.innerHTML = `
+                <div class="relative max-w-4xl max-h-full p-4">
+                    <button onclick="this.closest('.fixed').remove()" 
+                            class="absolute top-4 right-4 text-white hover:text-gray-300 z-10">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                    <img src="http://localhost:8001/photos/image/${photoId}" 
+                         alt="${filename}" 
+                         class="max-w-full max-h-full object-contain">
+                </div>
+            `;
+            document.body.appendChild(viewer);
+        }
+
+        async function setPrimaryPhoto(photoId, vehicleId) {
+            try {
+                console.log(`⭐ Setting photo ${photoId} as primary for vehicle ${vehicleId}`);
+                const response = await fetch(`http://localhost:8001/photos/${photoId}/set-primary`, {
+                    method: 'PUT'
+                });
+                
+                if (response.ok) {
+                    alert('Foto establecida como principal');
+                    // Reload photos
+                    await loadVehiclePhotos(vehicleId);
+                } else {
+                    alert('Error al establecer foto como principal');
+                }
+            } catch (error) {
+                console.error('Error setting primary photo:', error);
+                alert('Error de conexión');
+            }
+        }
+
+        async function deletePhotoFromViewer(photoId, vehicleId) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta foto?')) {
+                try {
+                    const response = await fetch(`http://localhost:8001/photos/${photoId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        alert('Foto eliminada exitosamente');
+                        // Reload photos
+                        await loadVehiclePhotos(vehicleId);
+                    } else {
+                        alert('Error al eliminar la foto');
+                    }
+                } catch (error) {
+                    console.error('Error deleting photo:', error);
+                    alert('Error de conexión');
+                }
+            }
+        }
+
+        async function deletePhoto(photoId, vehicleId) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta foto?')) {
+                try {
+                    const response = await fetch(`http://localhost:8001/photos/${photoId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        alert('Foto eliminada exitosamente');
+                        // Refresh photos for this vehicle
+                        loadVehiclePhotos(vehicleId);
+                    } else {
+                        const error = await response.text();
+                        alert('Error al eliminar la foto: ' + error);
+                    }
+                } catch (error) {
+                    alert('Error de conexión: ' + error.message);
+                }
+            }
+        }
+
+        function downloadPhoto(photoId) {
+            // Open photo in new tab for download
+            window.open(`http://localhost:8001/photos/image/${photoId}`, '_blank');
+        }
+
+        // Drag and Drop Photo Upload Functions
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.currentTarget.classList.add('border-blue-500', 'bg-blue-50');
+        }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.currentTarget.classList.add('border-blue-500', 'bg-blue-50');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.currentTarget.classList.remove('border-blue-500', 'bg-blue-50');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.currentTarget.classList.remove('border-blue-500', 'bg-blue-50');
+            
+            const files = e.dataTransfer.files;
+            handleFiles(files);
+        }
+
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            const photoInput = document.getElementById('photoInput');
+            const photoPreview = document.getElementById('photoPreview');
+            
+            // Clear previous previews
+            photoPreview.innerHTML = '';
+            
+            // Add files to the input
+            const dataTransfer = new DataTransfer();
+            for (let file of files) {
+                if (file.type.startsWith('image/')) {
+                    dataTransfer.items.add(file);
+                }
+            }
+            photoInput.files = dataTransfer.files;
+            
+            // Show previews
+            for (let file of files) {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'w-full h-24 object-cover rounded border';
+                        img.alt = file.name;
+                        photoPreview.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+
+        // Facebook Integration Functions
+        async function loadFacebookData() {
+            try {
+                // Load Facebook status
+                const statusResponse = await fetch('http://localhost:8001/facebook/automation/status');
+                if (statusResponse.ok) {
+                    const statusData = await statusResponse.json();
+                    updateFacebookStatus(statusData);
+                }
+                
+                // Load Facebook accounts
+                const accountsResponse = await fetch('http://localhost:8001/facebook/accounts');
+                if (accountsResponse.ok) {
+                    const accountsData = await accountsResponse.json();
+                    updateFacebookAccounts(accountsData.accounts);
+                }
+                
+                // Load vehicles for posting
+                const vehiclesResponse = await fetch('http://localhost:8001/vehicles');
+                if (vehiclesResponse.ok) {
+                    const vehiclesData = await vehiclesResponse.json();
+                    updateVehicleSelect(vehiclesData.vehicles);
+                }
+                
+            } catch (error) {
+                console.error('Error loading Facebook data:', error);
+            }
+        }
+
+        function updateFacebookStatus(status) {
+            const statusDiv = document.getElementById('facebook-status');
+            if (status.error) {
+                statusDiv.innerHTML = `
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        <strong>Error:</strong> ${status.error}
+                    </div>
+                `;
+            } else {
+                statusDiv.innerHTML = `
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-check-circle text-green-600"></i>
+                            <div>
+                                <strong>Facebook Integration Active</strong>
+                                <div class="text-sm">Accounts: ${status.accounts_configured} | Auto Repost: ${status.auto_repost ? 'Enabled' : 'Disabled'}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function updateFacebookAccounts(accounts) {
+            const accountsDiv = document.getElementById('facebook-accounts');
+            const selectDiv = document.getElementById('facebook-account-select');
+            
+            accountsDiv.innerHTML = accounts.map((account, index) => `
+                <div class="bg-white border border-gray-200 rounded-lg p-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-900">${account.account_name}</h4>
+                            <p class="text-sm text-gray-500">Account ${index + 1}</p>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button onclick="testFacebookAccount(${index})" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
+                            Test Connection
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            selectDiv.innerHTML = '<option value="">Select Account</option>' + 
+                accounts.map((account, index) => `<option value="${index}">${account.account_name}</option>`).join('');
+        }
+
+        function updateVehicleSelect(vehicles) {
+            const selectDiv = document.getElementById('facebook-vehicle-select');
+            selectDiv.innerHTML = '<option value="">Select Vehicle</option>' + 
+                vehicles.map(vehicle => `<option value="${vehicle.id}">${vehicle.marca} ${vehicle.modelo} ${vehicle.año}</option>`).join('');
+        }
+
+        async function testFacebookConnection() {
+            try {
+                const response = await fetch('http://localhost:8001/facebook/accounts/0/test', {
+                    method: 'POST'
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        alert(`✅ Connection successful!\nUser: ${data.user_name}\nID: ${data.user_id}`);
+                    } else {
+                        alert(`❌ Connection failed: ${data.error}`);
+                    }
+                }
+            } catch (error) {
+                alert('❌ Error testing connection: ' + error.message);
+            }
+        }
+
+        async function testFacebookAccount(accountId) {
+            try {
+                const response = await fetch(`http://localhost:8001/facebook/accounts/${accountId}/test`, {
+                    method: 'POST'
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        alert(`✅ Account ${accountId + 1} connected!\nUser: ${data.user_name}\nID: ${data.user_id}`);
+                    } else {
+                        alert(`❌ Account ${accountId + 1} failed: ${data.error}`);
+                    }
+                }
+            } catch (error) {
+                alert('❌ Error testing account: ' + error.message);
+            }
+        }
+
+        async function postVehicleToFacebook() {
+            const accountId = document.getElementById('facebook-account-select').value;
+            const vehicleId = document.getElementById('facebook-vehicle-select').value;
+            
+            if (!accountId || !vehicleId) {
+                alert('Please select both account and vehicle');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`http://localhost:8001/facebook/vehicles/${vehicleId}/post?account_id=${accountId}`, {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        alert(`✅ Vehicle posted successfully!\nPost ID: ${data.post_id}`);
+                    } else {
+                        alert(`❌ Posting failed: ${data.error}`);
+                    }
+                }
+            } catch (error) {
+                alert('❌ Error posting vehicle: ' + error.message);
+            }
+        }
+
+        function refreshFacebookStatus() {
+            loadFacebookData();
+        }
+
+        // Force refresh dashboard data
+        async function forceRefreshDashboard() {
+            console.log('🔄 Force refreshing dashboard data...');
+            // Clear any cached data
+            if ('caches' in window) {
+                const cacheNames = await caches.keys();
+                await Promise.all(
+                    cacheNames.map(cacheName => caches.delete(cacheName))
+                );
+            }
+            
+            // Reload dashboard data
+            await loadDashboardData();
+            
+            // Show success message
+            const button = event.target.closest('button');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i><span>Actualizado</span>';
+            button.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+            button.classList.add('bg-green-600');
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.classList.remove('bg-green-600');
+                button.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            }, 2000);
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Initializing Autosell.mx Dashboard');
+            loadDashboardData();
+            
+            // Ensure navigation is properly initialized
+            setTimeout(() => {
+                const navigation = document.getElementById('vehicles-navigation');
+                if (navigation && window.currentVehicles && window.currentVehicles.length > 0) {
+                    console.log('🔄 Ensuring navigation is visible');
+                    navigation.classList.remove('hidden');
+                    updateNavigation();
+                }
+            }, 1000);
+            
+            // Refresh dashboard every 30 seconds
+            setInterval(() => {
+                console.log('🔄 Auto-refreshing dashboard data');
+                loadDashboardData();
+            }, 30000);
+        });
+    </script>
+</body>
+</html>

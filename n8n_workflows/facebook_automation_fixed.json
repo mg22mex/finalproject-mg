@@ -51,7 +51,7 @@
     },
     {
       "parameters": {
-        "url": "http://127.0.0.1:8000/facebook/accounts/status",
+        "url": "http://127.0.0.1:8001/facebook/accounts/status",
         "authentication": "none",
         "requestMethod": "GET",
         "options": {}
@@ -96,7 +96,7 @@
     },
     {
       "parameters": {
-        "url": "http://127.0.0.1:8000/facebook/test-post",
+        "url": "http://127.0.0.1:8001/facebook/test-post",
         "authentication": "none",
         "requestMethod": "POST",
         "sendBody": true,
