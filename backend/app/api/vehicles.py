@@ -217,7 +217,7 @@ async def update_vehicle(
             detail="Internal server error while updating vehicle"
         )
 
-@router.delete("/{vehicle_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{vehicle_id}")
 async def delete_vehicle(
     vehicle_id: int,
     db: Session = Depends(get_db)
@@ -241,11 +241,25 @@ async def delete_vehicle(
                 detail="Cannot delete sold vehicles"
             )
         
+        # Store vehicle info before deletion
+        vehicle_info = {
+            "id": vehicle.id,
+            "marca": vehicle.marca,
+            "modelo": vehicle.modelo,
+            "display_name": vehicle.display_name
+        }
+        
         # Delete vehicle (cascade will handle related records)
         db.delete(vehicle)
         db.commit()
         
-        logger.info(f"Deleted vehicle {vehicle_id}: {vehicle.display_name}")
+        logger.info(f"Deleted vehicle {vehicle_id}: {vehicle_info['display_name']}")
+        
+        return {
+            "id": vehicle_id,
+            "message": "Vehicle deleted successfully",
+            "deleted_vehicle": vehicle_info
+        }
         
     except HTTPException:
         raise
