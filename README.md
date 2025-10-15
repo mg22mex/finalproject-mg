@@ -22,6 +22,9 @@ Autosell.mx is a comprehensive vehicle management system that automates inventor
 - ✅ **Optimized Architecture** - Database stores metadata only, photos in Google Drive
 
 ## 🎯 **CURRENT STATUS:**
+![System Dashboard](docs/screenshots/dashboard-overview.png)
+*Main dashboard showing 133 vehicles with complete system status*
+
 - **Backend System**: ✅ FastAPI running on port 8001 with 133 vehicles imported
 - **Frontend System**: ✅ React dashboard running on port 3002 with full functionality
 - **n8n Automation**: ✅ Running on port 5678 with active Google Sheets sync workflow
@@ -35,6 +38,13 @@ Autosell.mx is a comprehensive vehicle management system that automates inventor
 - **Production Ready**: ✅ All systems working and ready for deployment
 
 ## 🏗️ **OPTIMIZED ARCHITECTURE:**
+
+![Google Sheets Data Source](docs/screenshots/google-sheets-inventory.png)
+*Google Sheets inventory with 133 vehicles - primary data source*
+
+![Google Drive Photo Storage](docs/screenshots/google-drive-integration.png)
+*Google Drive integration for unlimited photo storage*
+
 ### **Database (GitHub Codespaces - ~300MB):**
 - ✅ **Vehicle metadata** (marca, modelo, precio, estatus, etc.)
 - ✅ **Drive folder references** (folder_id, folder_url)
@@ -49,6 +59,13 @@ Autosell.mx is a comprehensive vehicle management system that automates inventor
 - ✅ **Automatic backups** (Google Drive built-in)
 
 ## 🌐 **LIVE DEPLOYMENT**
+
+![Vehicle Management Interface](docs/screenshots/vehicle-list.png)
+*Complete vehicle management interface with 133 vehicles*
+
+![Vehicle Details Modal](docs/screenshots/vehicle-details.png)
+*Detailed vehicle information with photo management*
+
 **Production URLs:**
 - **Frontend Dashboard**: https://autosell-frontend.vercel.app
 - **Backend API**: https://autosell-backend.vercel.app
@@ -569,6 +586,12 @@ POST /api/vehicles/{id}/status
 ```
 
 ### **Photo Management:**
+![Photo Management Interface](docs/screenshots/photo-management.png)
+*Complete photo management system with Google Drive integration*
+
+![Vehicle Edit Interface](docs/screenshots/vehicle-edit.png)
+*Vehicle editing interface with photo upload capabilities*
+
 ```http
 # Upload photos
 POST /api/photos
@@ -582,6 +605,12 @@ DELETE /api/photos/{id}
 ```
 
 ### **Social Media:**
+![Facebook Integration](docs/screenshots/facebook-integration.png)
+*Facebook Marketplace integration with multi-account support*
+
+![System Configuration](docs/screenshots/system-configuration.png)
+*System configuration and health monitoring dashboard*
+
 ```http
 # Create social media post
 POST /api/social/posts
@@ -618,6 +647,9 @@ POST /frontend/post-to-facebook
 ```
 
 ## 🤖 **N8N WORKFLOWS**
+
+![n8n Automation Workflow](docs/screenshots/n8n-workflow.png)
+*Complete automation workflow with Google Sheets sync and Facebook integration*
 
 ### **Daily Automation Workflow:**
 ```json
